@@ -10,7 +10,6 @@ Configuração de referência: https://github.com/aqu1no1/currency-converter-web
 - `pnpm test`: Vitest.
 - `pnpm pr`: verificações automatizadas da PR.
 
-
 ## TypeScript 6
 
 `tsconfig.app.json` tem `target: ES2023`, `module: ESNext`, `moduleResolution: Bundler`, `strict`, `verbatimModuleSyntax`, `erasableSyntaxOnly` e mapeamento `@/*` para `./src/*` sem `baseUrl` depreciado. `tsconfig.node.json` usa `NodeNext` no contexto Node ESM do Vite. O alias também está em `vite.config.ts`; typecheck isolado de teste usa `tsconfig.test.json`.
