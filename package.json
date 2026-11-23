@@ -12,7 +12,11 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "pr": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test"
+    "pr": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
+    "dev": "vite",
+    "build": "tsc --noEmit -p tsconfig.app.json && vite build",
+    "preview": "vite preview",
+    "test:cov": "vitest run --coverage"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
