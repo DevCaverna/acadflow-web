@@ -1,0 +1,10 @@
+{
+  "appName": "AcadFlow",
+  "signIn": "Entrar",
+  "email": "E-mail",
+  "password": "Senha",
+  "approved": "Aprovado",
+  "recovery": "Recuperação",
+  "failed": "Reprovado",
+  "noGrades": "Sem notas"
+}
