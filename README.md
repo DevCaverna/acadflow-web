@@ -12,9 +12,9 @@
 
 O professor gerencia disciplinas, atividades e notas, e o aluno acompanha atividades, notas, média e situação acadêmica. A aplicação consome a [AcadFlow API](https://github.com/DevCaverna/acadflow-api), com autenticação JWT e acesso por perfil.
 
-**Tecnologias:** `React` · `Vite` · `TypeScript` · `pnpm` · `GitHub Actions`
+**Tecnologias:** `React` · `Vite` · `TypeScript` · `TanStack Query` · `Vitest` · `Testing Library` · `pnpm` · `GitHub Actions`
 
-> Projeto em fase inicial: o código ainda não foi adicionado.
+> Projeto em fase inicial: a aplicação será inicializada em PR separado.
 
 ## Demonstração
 
@@ -32,17 +32,17 @@ pnpm dev
 
 ## Documentação
 
-| Página | O que terá |
+| Página | O que tem |
 | --- | --- |
 | [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto |
-| `docs/stack.md` | Bibliotecas, versões e funções |
-| `docs/arquitetura.md` | Estrutura, componentes, estado e navegação |
-| `docs/configuracao.md` | Ambiente, API e execução |
-| `docs/testes.md` | Testes, scripts e validações |
-| `docs/CI.md` | Automação, builds e versionamento |
-| `docs/diagramas/telas-e-fluxos.md` | Navegação e jornadas principais |
-
-> Os arquivos de `docs/` serão criados ao longo do projeto.
+| [Execução](docs/execucao/README.md) | Como rodar, testar e resolver problemas |
+| [Arquitetura](docs/arquitetura.md) | Organização e decisões |
+| [Configuração](docs/configuracao.md) | Variáveis de ambiente |
+| [Testes](docs/testes.md) | Tipos de teste e comandos |
+| [CI](docs/CI.md) | Pipeline e branches |
+| [Qualidade e editores](docs/qualidade-e-editores.md) | Oxlint, Oxfmt, TypeScript, VS Code e Zed |
+| [Contratos para mocks](docs/contratos-mock.md) | Tipos e rotas da API |
+| [AGENTS.md](AGENTS.md) | Diretrizes para colaboradores e agentes |
 
 ## Repositórios
 

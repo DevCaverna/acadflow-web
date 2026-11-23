@@ -19,6 +19,6 @@ As dependências no package.json são **somente o ferramental inicial**. O boots
 
 `.vscode/` e `.zed/` contêm os ajustes compartilhados Oxlint/Oxfmt e tasks do Zed. Os imports internos usam `@/` (em vez de `../`); bibliotecas externas e imports apenas de tipos continuam com o padrão TypeScript.
 
-## PR e idioma
+## Idiomas
 
-O checklist de PR exige mensagens/traduções somente em `pt-BR`. Os arquivos `en`/`es` já existentes no projeto não foram apagados, pois a alteração solicitada refere-se ao template de revisão.
+O AcadFlow usa somente `pt-BR` (padrão) e `en`. O checklist de PR cobra `pt-BR`; novas traduções devem ser adicionadas também em `en`.
