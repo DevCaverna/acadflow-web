@@ -9,5 +9,3 @@ Testes da Web usam mocks HTTP com TanStack Query/Axios; não acessam banco Postg
 
 Regras de branch: ao menos um reviewer e checks Web / Validate e Web / Build.
 O acadflow-design não terá CI/CD nem suíte automatizada de testes.
-
-Aviso: scaffolding em PR Draft; ainda é necessário instalar dependências React/Vite/Vitest e gerar pnpm-lock.yaml. Pipeline ainda não validada.

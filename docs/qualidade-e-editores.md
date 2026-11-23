@@ -3,13 +3,13 @@
 Configuração de referência: https://github.com/aqu1no1/currency-converter-web.
 
 ## Oxc
+
 - `pnpm lint` / `pnpm lint:fix`: Oxlint; lint type-aware.
 - `pnpm format` / `pnpm format:check`: Oxfmt.
 - `pnpm typecheck`: verifica configurações app, Node e testes.
-- `pnpm test`: Vitest (necessário instalar e configurar no bootstrap).
+- `pnpm test`: Vitest.
 - `pnpm pr`: verificações automatizadas da PR.
 
-As dependências no package.json são **somente o ferramental inicial**. O bootstrap de React/Vite/TanStack Query/Vitest precisa adicionar dependências do app, plugins, gerar e commitar `pnpm-lock.yaml` e validar os scripts no Node/pnpm compatíveis.
 
 ## TypeScript 6
 

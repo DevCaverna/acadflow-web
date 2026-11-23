@@ -1,12 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "react",
-    "import",
-    "unicorn",
-    "oxc"
-  ],
+  "plugins": ["typescript", "react", "import", "unicorn", "oxc"],
   "env": {
     "browser": true,
     "node": true,
@@ -23,19 +17,12 @@
       {
         "patterns": [
           {
-            "group": [
-              "./*",
-              "../*"
-            ],
+            "group": ["./*", "../*"],
             "message": "Use aliases @/ em vez de caminhos relativos para imports internos."
           }
         ]
       }
     ]
   },
-  "ignorePatterns": [
-    "node_modules",
-    "dist",
-    "coverage"
-  ]
+  "ignorePatterns": ["node_modules", "dist", "coverage"]
 }

@@ -6,5 +6,6 @@
   "approved": "Approved",
   "recovery": "Recovery",
   "failed": "Failed",
-  "noGrades": "No grades"
+  "noGrades": "No grades",
+  "tagline": "Organize courses, activities and grades."
 }

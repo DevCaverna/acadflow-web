@@ -79,8 +79,8 @@
 <!-- Inclua prints, vídeos, teste no navegador e links de workflows quando se aplicar. -->
 
 | Antes | Depois |
-| --- | --- |
-| | |
+| ----- | ------ |
+|       |        |
 
 ---
 

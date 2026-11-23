@@ -1,7 +1,5 @@
 # Como executar o AcadFlow Web
 
-> Os comandos passam a funcionar após a implementação do bootstrap React/Vite, dependências, lockfile e Dockerfiles.
-
 ## Pré-requisitos
 
 - Node.js **24**, pnpm **12.4.2**, ou Docker Engine + Compose v2.

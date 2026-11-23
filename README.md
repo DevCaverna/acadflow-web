@@ -1,11 +1,11 @@
 <div align="center">
   <img src="docs/assets/icon.svg" width="110" alt="Ícone do AcadFlow" />
 
-  # AcadFlow — Web
+# AcadFlow — Web
 
-  Aplicação web para professores e alunos organizarem disciplinas, atividades e notas.
+Aplicação web para professores e alunos organizarem disciplinas, atividades e notas.
 
-  [Documentação no Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125)
+[Documentação no Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125)
 </div>
 
 ## Sobre
@@ -13,8 +13,6 @@
 O professor gerencia disciplinas, atividades e notas, e o aluno acompanha atividades, notas, média e situação acadêmica. A aplicação consome a [AcadFlow API](https://github.com/DevCaverna/acadflow-api), com autenticação JWT e acesso por perfil.
 
 **Tecnologias:** `React` · `Vite` · `TypeScript` · `TanStack Query` · `Vitest` · `Testing Library` · `pnpm` · `GitHub Actions`
-
-> Projeto em fase inicial: a aplicação será inicializada em PR separado.
 
 ## Demonstração
 
@@ -28,21 +26,21 @@ pnpm install
 pnpm dev
 ```
 
-> Comandos previstos: passam a valer quando a estrutura inicial for adicionada.
+> Veja [docs/execucao](docs/execucao/README.md) para rodar com Docker.
 
 ## Documentação
 
-| Página | O que tem |
-| --- | --- |
-| [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto |
-| [Execução](docs/execucao/README.md) | Como rodar, testar e resolver problemas |
-| [Arquitetura](docs/arquitetura.md) | Organização e decisões |
-| [Configuração](docs/configuracao.md) | Variáveis de ambiente |
-| [Testes](docs/testes.md) | Tipos de teste e comandos |
-| [CI](docs/CI.md) | Pipeline e branches |
-| [Qualidade e editores](docs/qualidade-e-editores.md) | Oxlint, Oxfmt, TypeScript, VS Code e Zed |
-| [Contratos para mocks](docs/contratos-mock.md) | Tipos e rotas da API |
-| [AGENTS.md](AGENTS.md) | Diretrizes para colaboradores e agentes |
+| Página                                                                                     | O que tem                                |
+| ------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto         |
+| [Execução](docs/execucao/README.md)                                                        | Como rodar, testar e resolver problemas  |
+| [Arquitetura](docs/arquitetura.md)                                                         | Organização e decisões                   |
+| [Configuração](docs/configuracao.md)                                                       | Variáveis de ambiente                    |
+| [Testes](docs/testes.md)                                                                   | Tipos de teste e comandos                |
+| [CI](docs/CI.md)                                                                           | Pipeline e branches                      |
+| [Qualidade e editores](docs/qualidade-e-editores.md)                                       | Oxlint, Oxfmt, TypeScript, VS Code e Zed |
+| [Contratos para mocks](docs/contratos-mock.md)                                             | Tipos e rotas da API                     |
+| [AGENTS.md](AGENTS.md)                                                                     | Diretrizes para colaboradores e agentes  |
 
 ## Repositórios
 

@@ -106,8 +106,6 @@ pnpm build
 pnpm pr
 ```
 
-> A lista acima é o contrato de scripts planejados; só afirmar que funcionam quando o bootstrap, dependências e `pnpm-lock.yaml` estiverem completos.
-
 - CI em PR/push para `develop`, `staging` e `main` com Node 24/pnpm 12.4.2; validação antes do build, artefatos somente após sucesso. Não confundir artefato com deploy.
 
 ## 9. Git, Linear e Pull Requests
