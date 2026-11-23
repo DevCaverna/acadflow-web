@@ -1,0 +1,11 @@
+{
+  "appName": "AcadFlow",
+  "signIn": "Sign in",
+  "email": "Email",
+  "password": "Password",
+  "approved": "Approved",
+  "recovery": "Recovery",
+  "failed": "Failed",
+  "noGrades": "No grades",
+  "tagline": "Organize courses, activities and grades."
+}

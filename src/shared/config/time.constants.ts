@@ -1,0 +1,7 @@
+export const TIME = {
+  SECOND_MS: 1_000,
+  MINUTE_MS: 60_000,
+  HOUR_MS: 3_600_000,
+  DEFAULT_TOAST_MS: 4_000,
+  QUERY_STALE_MS: 30_000,
+} as const;

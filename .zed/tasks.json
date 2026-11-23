@@ -1,0 +1,52 @@
+[
+  {
+    "label": "🌐 Dev",
+    "command": "pnpm",
+    "args": ["dev"]
+  },
+  {
+    "label": "📦 Build",
+    "command": "pnpm",
+    "args": ["build"]
+  },
+  {
+    "label": "👀 Preview",
+    "command": "pnpm",
+    "args": ["preview"]
+  },
+  {
+    "label": "🔍 Oxlint",
+    "command": "pnpm",
+    "args": ["lint"]
+  },
+  {
+    "label": "🛠️ Oxlint Fix",
+    "command": "pnpm",
+    "args": ["lint:fix"]
+  },
+  {
+    "label": "✨ Oxfmt",
+    "command": "pnpm",
+    "args": ["format"]
+  },
+  {
+    "label": "✅ Oxfmt Check",
+    "command": "pnpm",
+    "args": ["format:check"]
+  },
+  {
+    "label": "🔎 Typecheck",
+    "command": "pnpm",
+    "args": ["typecheck"]
+  },
+  {
+    "label": "🧪 Tests",
+    "command": "pnpm",
+    "args": ["test"]
+  },
+  {
+    "label": "✅ PR Check",
+    "command": "pnpm",
+    "args": ["pr"]
+  }
+]
