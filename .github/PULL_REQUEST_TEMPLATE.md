@@ -40,7 +40,7 @@
 - [ ] Código segue organização `src/features/`, nomes em inglês e imports por alias `@/`
 - [ ] Não há `console.log` ou código comentado desnecessário
 - [ ] Componentes novos têm JSDoc no componente e nas props; demais comentários apenas quando indispensáveis
-- [ ] Textos de interface passam por `t()` com traduções em `pt-BR`, `en` e `es` (fallback `pt-BR`)
+- [ ] Textos de interface passam por `t()` com traduções em `pt-BR` (fallback `pt-BR`)
 - [ ] Cores e espaçamentos seguem tokens definidos pelo design AcadFlow; sem valores hexadecimais fixos nos componentes
 - [ ] Classes condicionais são montadas usando `cn()`
 - [ ] Consultas usam service Axios + hook TanStack Query; respostas externas são validadas com Zod nas fronteiras
