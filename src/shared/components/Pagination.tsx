@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/shared/components/Button';
 
 /** Props de {@link Pagination}. */
 type PaginationProps = {
@@ -19,13 +20,13 @@ export function Pagination({ page, perPage, total, onPageChange }: PaginationPro
   if (pages <= 1) return null;
   return (
     <nav aria-label={t('pagination.label')} className="flex items-center gap-4">
-      <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
+      <Button variant="secondary" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
         {t('pagination.previous')}
-      </button>
+      </Button>
       <span>{t('pagination.current', { page, pages })}</span>
-      <button type="button" disabled={page >= pages} onClick={() => onPageChange(page + 1)}>
+      <Button variant="secondary" disabled={page >= pages} onClick={() => onPageChange(page + 1)}>
         {t('pagination.next')}
-      </button>
+      </Button>
     </nav>
   );
 }
