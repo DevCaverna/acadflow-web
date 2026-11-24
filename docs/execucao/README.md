@@ -60,3 +60,5 @@ O `docker/Dockerfile` de produção deve gerar `dist/` com Vite e servir a SPA e
 ## Ambientes Git
 
 Branch feature → `develop` → `staging` → `main`, por PR com review e CI verde. O build `dist/` não implica deploy automático.
+
+Para publicar e promover uma imagem Docker entre ambientes, consulte o [guia de releases e deploy](deploy.md).

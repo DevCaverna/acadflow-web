@@ -20,7 +20,7 @@ export class ApiService {
 
   private constructor() {
     this.http = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL,
+      baseURL: window.__ACADFLOW_API_BASE_URL__ ?? import.meta.env.VITE_API_BASE_URL,
       timeout: TIME.REQUEST_TIMEOUT_MS,
     });
     this.http.interceptors.request.use((config) => this.addHeaders(config));
