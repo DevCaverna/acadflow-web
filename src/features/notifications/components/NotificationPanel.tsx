@@ -88,7 +88,7 @@ export function NotificationPanel({ isStudent, onNavigate }: NotificationPanelPr
   return (
     <section
       aria-label={t('title')}
-      className="fixed inset-x-4 top-4 z-20 flex max-h-[70vh] flex-col overflow-hidden rounded-card border border-line bg-surface shadow-xl md:absolute md:inset-x-auto md:top-auto md:bottom-full md:left-0 md:mb-2 md:w-95"
+      className="fixed inset-x-4 bottom-4 z-20 flex max-h-[70vh] flex-col overflow-hidden rounded-card border border-line bg-surface shadow-xl md:absolute md:inset-x-auto md:bottom-full md:left-0 md:mb-2 md:w-95"
     >
       <header className="flex items-center justify-between border-b border-line px-4.5 py-4">
         <h2 className="font-semibold">{t('title')}</h2>
