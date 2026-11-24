@@ -53,6 +53,9 @@ test/
 
 - **TanStack Query** é a fonte de verdade para dados remotos: queries, mutações, cache, invalidação, loading e refetch.
 - O acesso HTTP passa por **services Axios** (um cliente base em `shared/api`) e hooks por feature (`useDisciplines`, `useGrades`). Validar respostas externas em fronteiras com Zod.
+- **Cliente HTTP único:** `ApiService` (`shared/api/api.service.ts`) é um singleton, acessado por `ApiService.getInstance()`. Só ele usa Axios; cuida de token, idioma, timeout, sessão expirada e validação Zod (`api.get({ url, schema })`).
+- **Service por domínio:** classe que recebe `ApiService` no construtor e exporta uma instância única (`export const gradesService = new GradesService(apiService)`). Métodos com parâmetros nomeados recebem um objeto tipado e declaram o retorno.
+- Componentes não chamam services direto: usam os hooks da feature.
 - Redux Toolkit **somente se existir necessidade real de estado global da interface**; nunca RTK Query e nunca duplicar dados remotos no Redux.
 - Reutilizar query keys estáveis e invalidar consultas após mutações.
 - React Hook Form + Zod para formulários; erros devem ser legíveis, tipados e traduzidos.

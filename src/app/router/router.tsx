@@ -1,4 +1,4 @@
 import { createBrowserRouter } from 'react-router';
-import { HomePage } from '@/app/router/HomePage';
+import { routes } from '@/app/router/routes';
 
-export const router = createBrowserRouter([{ path: '/', element: <HomePage /> }]);
+export const router = createBrowserRouter(routes);

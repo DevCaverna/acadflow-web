@@ -8,23 +8,36 @@ import {
   type StudentGrades,
   studentGradesSchema,
 } from '@/features/grades/schemas/grade.schema';
-import { apiClient } from '@/shared/api/client';
+import { type ApiService, apiService } from '@/shared/api/api.service';
 
-export const gradesService = {
-  async list(disciplineId: string): Promise<StudentGrades[]> {
-    const { data } = await apiClient.get<unknown>(`/disciplines/${disciplineId}/grades`);
-    return z.array(studentGradesSchema).parse(data);
-  },
+export class GradesService {
+  private readonly api: ApiService;
 
-  async mine(disciplineId: string): Promise<GradeSummary> {
-    const { data } = await apiClient.get<unknown>(`/disciplines/${disciplineId}/grades/me`);
-    return gradeSummarySchema.parse(data);
-  },
+  constructor(api: ApiService) {
+    this.api = api;
+  }
 
-  async save({ activityId, studentId, value }: SaveGradeInput): Promise<Grade> {
-    const { data } = await apiClient.put<unknown>(`/activities/${activityId}/grades/${studentId}`, {
-      value,
+  list({ disciplineId }: { disciplineId: string }): Promise<StudentGrades[]> {
+    return this.api.get({
+      url: `/disciplines/${disciplineId}/grades`,
+      schema: z.array(studentGradesSchema),
     });
-    return gradeSchema.parse(data);
-  },
-};
+  }
+
+  mine({ disciplineId }: { disciplineId: string }): Promise<GradeSummary> {
+    return this.api.get({
+      url: `/disciplines/${disciplineId}/grades/me`,
+      schema: gradeSummarySchema,
+    });
+  }
+
+  save({ activityId, studentId, value }: SaveGradeInput): Promise<Grade> {
+    return this.api.put({
+      url: `/activities/${activityId}/grades/${studentId}`,
+      schema: gradeSchema,
+      body: { value },
+    });
+  }
+}
+
+export const gradesService = new GradesService(apiService);

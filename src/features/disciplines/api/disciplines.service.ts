@@ -6,30 +6,49 @@ import {
   disciplineSchema,
   type Student,
   studentSchema,
+  type UpdateDisciplineInput,
 } from '@/features/disciplines/schemas/discipline.schema';
-import { apiClient } from '@/shared/api/client';
+import { type ApiService, apiService } from '@/shared/api/api.service';
 import { type Listing, listingSchema, toPaginationParams } from '@/shared/api/listing.schema';
 
-export const disciplinesService = {
-  async list(options: DisciplineListOptions = {}): Promise<Listing<Discipline>> {
-    const { data } = await apiClient.get<unknown>('/disciplines', {
+export class DisciplinesService {
+  private readonly api: ApiService;
+  private readonly baseUrl = '/disciplines';
+
+  constructor(api: ApiService) {
+    this.api = api;
+  }
+
+  list(options: DisciplineListOptions = {}): Promise<Listing<Discipline>> {
+    return this.api.get({
+      url: this.baseUrl,
+      schema: listingSchema(disciplineSchema),
       params: toPaginationParams(options),
     });
-    return listingSchema(disciplineSchema).parse(data);
-  },
+  }
 
-  async get(id: string): Promise<Discipline> {
-    const { data } = await apiClient.get<unknown>(`/disciplines/${id}`);
-    return disciplineSchema.parse(data);
-  },
+  get({ id }: { id: string }): Promise<Discipline> {
+    return this.api.get({ url: `${this.baseUrl}/${id}`, schema: disciplineSchema });
+  }
 
-  async listStudents(id: string): Promise<Student[]> {
-    const { data } = await apiClient.get<unknown>(`/disciplines/${id}/students`);
-    return z.array(studentSchema).parse(data);
-  },
+  listStudents({ id }: { id: string }): Promise<Student[]> {
+    return this.api.get({
+      url: `${this.baseUrl}/${id}/students`,
+      schema: z.array(studentSchema),
+    });
+  }
 
-  async create(input: CreateDisciplineInput): Promise<Discipline> {
-    const { data } = await apiClient.post<unknown>('/disciplines', input);
-    return disciplineSchema.parse(data);
-  },
-};
+  create(body: CreateDisciplineInput): Promise<Discipline> {
+    return this.api.post({ url: this.baseUrl, schema: disciplineSchema, body });
+  }
+
+  update({ id, ...body }: UpdateDisciplineInput): Promise<Discipline> {
+    return this.api.patch({ url: `${this.baseUrl}/${id}`, schema: disciplineSchema, body });
+  }
+
+  remove({ id }: { id: string }): Promise<void> {
+    return this.api.delete({ url: `${this.baseUrl}/${id}` });
+  }
+}
+
+export const disciplinesService = new DisciplinesService(apiService);

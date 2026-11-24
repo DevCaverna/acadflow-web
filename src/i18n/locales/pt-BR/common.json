@@ -13,5 +13,29 @@
     "previous": "Anterior",
     "next": "Próxima",
     "current": "Página {{page}} de {{pages}}"
-  }
+  },
+  "cancel": "Cancelar",
+  "save": "Salvar",
+  "edit": "Editar",
+  "remove": "Excluir",
+  "close": "Fechar",
+  "menu": "Menu principal",
+  "signOut": "Sair",
+  "roles": {
+    "PROFESSOR": "Professor",
+    "ALUNO": "Aluno"
+  },
+  "notFound": {
+    "label": "Erro 404",
+    "title": "Página não encontrada",
+    "text": "O endereço que você tentou abrir não existe ou foi movido.",
+    "back": "Voltar ao início"
+  },
+  "optional": "(opcional)",
+  "areas": {
+    "PROFESSOR": "Área do professor",
+    "ALUNO": "Área do aluno"
+  },
+  "breadcrumb": "Trilha",
+  "closeNotice": "Fechar aviso"
 }

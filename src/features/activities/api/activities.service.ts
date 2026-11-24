@@ -3,20 +3,40 @@ import {
   type Activity,
   activitySchema,
   type CreateActivityInput,
+  type UpdateActivityInput,
 } from '@/features/activities/schemas/activity.schema';
-import { apiClient } from '@/shared/api/client';
+import { type ApiService, apiService } from '@/shared/api/api.service';
 
-export const activitiesService = {
-  async list(disciplineId: string): Promise<Activity[]> {
-    const { data } = await apiClient.get<unknown>(`/disciplines/${disciplineId}/activities`);
-    return z.array(activitySchema).parse(data);
-  },
+export class ActivitiesService {
+  private readonly api: ApiService;
+  private readonly baseUrl = '/activities';
 
-  async create(disciplineId: string, input: CreateActivityInput): Promise<Activity> {
-    const { data } = await apiClient.post<unknown>(
-      `/disciplines/${disciplineId}/activities`,
-      input,
-    );
-    return activitySchema.parse(data);
-  },
-};
+  constructor(api: ApiService) {
+    this.api = api;
+  }
+
+  list({ disciplineId }: { disciplineId: string }): Promise<Activity[]> {
+    return this.api.get({
+      url: `/disciplines/${disciplineId}/activities`,
+      schema: z.array(activitySchema),
+    });
+  }
+
+  create({ disciplineId, ...body }: CreateActivityInput): Promise<Activity> {
+    return this.api.post({
+      url: `/disciplines/${disciplineId}/activities`,
+      schema: activitySchema,
+      body,
+    });
+  }
+
+  update({ id, ...body }: UpdateActivityInput): Promise<Activity> {
+    return this.api.patch({ url: `${this.baseUrl}/${id}`, schema: activitySchema, body });
+  }
+
+  remove({ id }: { id: string }): Promise<void> {
+    return this.api.delete({ url: `${this.baseUrl}/${id}` });
+  }
+}
+
+export const activitiesService = new ActivitiesService(apiService);

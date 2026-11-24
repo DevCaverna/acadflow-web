@@ -5,16 +5,22 @@ import {
   type User,
   userSchema,
 } from '@/features/auth/schemas/auth.schema';
-import { apiClient } from '@/shared/api/client';
+import { type ApiService, apiService, LOGIN_PATH } from '@/shared/api/api.service';
 
-export const authService = {
-  async login(input: LoginInput): Promise<Session> {
-    const { data } = await apiClient.post<unknown>('/auth/login', input);
-    return sessionSchema.parse(data);
-  },
+export class AuthService {
+  private readonly api: ApiService;
 
-  async me(): Promise<User> {
-    const { data } = await apiClient.get<unknown>('/auth/me');
-    return userSchema.parse(data);
-  },
-};
+  constructor(api: ApiService) {
+    this.api = api;
+  }
+
+  login(body: LoginInput): Promise<Session> {
+    return this.api.post({ url: LOGIN_PATH, schema: sessionSchema, body });
+  }
+
+  me(): Promise<User> {
+    return this.api.get({ url: '/auth/me', schema: userSchema });
+  }
+}
+
+export const authService = new AuthService(apiService);

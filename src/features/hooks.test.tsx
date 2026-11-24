@@ -8,9 +8,10 @@ import { useLogout } from '@/features/auth/hooks/useLogout';
 import { disciplineKeys } from '@/features/disciplines/api/disciplines.keys';
 import { useCreateDiscipline } from '@/features/disciplines/hooks/useDisciplines';
 import { gradeKeys } from '@/features/grades/api/grades.keys';
-import { useMyGrades, useSaveGrade } from '@/features/grades/hooks/useGrades';
+import { useMyGrades, useSaveGrades } from '@/features/grades/hooks/useGrades';
 import i18n from '@/i18n';
 import { accessToken } from '@/shared/api/access-token';
+import { toastStore } from '@/shared/lib/toast';
 import { mockApi } from '@/test/mock-api';
 import { createQueryWrapper } from '@/test/query-wrapper';
 
@@ -34,7 +35,9 @@ describe('feature hooks', () => {
     expect(queryClient.getQueryData(authKeys.me)).toEqual(user);
 
     const logout = renderHook(() => useLogout(), { wrapper });
+    toastStore.show('Saved');
     void act(() => logout.result.current());
+    expect(toastStore.get()).toHaveLength(0);
     expect(accessToken.get()).toBeNull();
     expect(queryClient.getQueryData(authKeys.me)).toBeUndefined();
   });
@@ -78,7 +81,7 @@ describe('feature hooks', () => {
     queryClient.setQueryData(activityKeys.list(ID), []);
     queryClient.setQueryData(activityKeys.list(OTHER_ID), []);
     const { result } = renderHook(() => useCreateActivity(ID), { wrapper });
-    await act(() => result.current.mutateAsync({ title: 'Test' }));
+    await act(() => result.current.mutateAsync({ title: 'Test', description: null, dueAt: null }));
     expect(queryClient.getQueryState(activityKeys.list(ID))?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(activityKeys.list(OTHER_ID))?.isInvalidated).toBe(false);
   });
@@ -88,9 +91,9 @@ describe('feature hooks', () => {
     const { queryClient, wrapper } = createQueryWrapper();
     queryClient.setQueryData(gradeKeys.list(ID), []);
     queryClient.setQueryData(gradeKeys.mine(ID), {});
-    const { result } = renderHook(() => useSaveGrade(ID), { wrapper });
+    const { result } = renderHook(() => useSaveGrades(ID), { wrapper });
     await act(() =>
-      result.current.mutateAsync({ activityId: ID, studentId: OTHER_ID, value: 7.5 }),
+      result.current.mutateAsync([{ activityId: ID, studentId: OTHER_ID, value: 7.5 }]),
     );
     expect(queryClient.getQueryState(gradeKeys.list(ID))?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(gradeKeys.mine(ID))?.isInvalidated).toBe(true);

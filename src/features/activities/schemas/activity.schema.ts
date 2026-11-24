@@ -9,4 +9,22 @@ export const activitySchema = z.object({
 });
 
 export type Activity = z.infer<typeof activitySchema>;
-export type CreateActivityInput = { title: string; description?: string; dueAt?: string };
+export const activityFormSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, 'errors:validation.required')
+    .max(160, 'errors:validation.tooLong'),
+  description: z.string().trim().max(2000, 'errors:validation.tooLong'),
+  dueAt: z.string(),
+});
+
+export const newActivityFormSchema = activityFormSchema.refine(
+  ({ dueAt }) => dueAt === '' || new Date(dueAt).getTime() > Date.now(),
+  { path: ['dueAt'], message: 'activities:pastDate' },
+);
+
+export type ActivityForm = z.infer<typeof activityFormSchema>;
+export type ActivityInput = { title: string; description: string | null; dueAt: string | null };
+export type CreateActivityInput = ActivityInput & { disciplineId: string };
+export type UpdateActivityInput = ActivityInput & { id: string };

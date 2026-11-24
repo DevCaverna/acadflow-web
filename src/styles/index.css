@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
 
 @theme {
   --color-primary: #2e43c8;
@@ -11,12 +13,41 @@
   --color-canvas: #f5f6fa;
   --color-success: #1c7a4a;
   --color-danger: #c0322a;
+  --color-danger-hover: #a02720;
+  --color-danger-soft: #fce9e7;
+  --color-success-soft: #e6f4ec;
+  --color-warning-soft: #fdf3e1;
+  --color-primary-soft: #eef0fc;
+  --color-primary-muted: #dde2fa;
+  --color-danger-ink: #8f241e;
+  --color-warning-ink: #5c3800;
+  --color-subtle: #f0f1f5;
+  --color-skeleton: #e9ebf2;
+  --color-field: #c9cdda;
+  --radius-panel: 16px;
   --color-warning: #8a5300;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
   --radius-field: 6px;
   --radius-button: 10px;
   --radius-card: 14px;
+}
+
+@layer base {
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+    }
+  }
 }
 
 body {

@@ -1,4 +1,10 @@
 {
   "unexpected": "An unexpected error occurred.",
-  "network": "Could not reach the server."
+  "network": "Could not reach the server.",
+  "validation": {
+    "required": "Required field",
+    "email": "Enter a valid email",
+    "semester": "Use the format 2026.1 or 2026.2",
+    "tooLong": "Text is too long"
+  }
 }
