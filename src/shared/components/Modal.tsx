@@ -33,7 +33,7 @@ export function Modal({ title, subtitle, children, onClose }: ModalProps) {
         event.preventDefault();
         onClose();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-xl rounded-panel bg-white text-ink shadow-2xl backdrop:bg-ink/55"
+      className="m-auto w-[calc(100%-2rem)] max-w-xl rounded-panel bg-surface text-ink shadow-2xl backdrop:bg-black/55"
     >
       <header className="flex items-start justify-between gap-4 border-b border-line px-6 py-5">
         <div className="flex min-w-0 flex-col gap-1">

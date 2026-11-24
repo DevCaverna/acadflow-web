@@ -46,8 +46,8 @@ export function GradesPage() {
                     aria-pressed={id === selected.id}
                     onClick={() => setParams({ discipline: id })}
                     className={cn(
-                      'min-h-10 rounded-full border border-field bg-white px-4 py-1 text-sm font-semibold wrap-anywhere',
-                      id === selected.id && 'border-ink bg-ink text-white',
+                      'min-h-10 rounded-full border border-field bg-surface px-4 py-1 text-sm font-semibold wrap-anywhere',
+                      id === selected.id && 'border-inverse bg-inverse text-white',
                     )}
                   >
                     {name}

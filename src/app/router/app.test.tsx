@@ -9,8 +9,14 @@ import { mockApi } from '@/test/mock-api';
 import { renderApp } from '@/test/render-app';
 
 const id = (n: number) => `019ac3a0-0000-7000-8000-00000000000${n}`;
-const professor = { id: id(1), name: 'Marina', email: 'm@example.com', role: 'PROFESSOR' };
-const student = { id: id(2), name: 'Ana', email: 'a@example.com', role: 'ALUNO' };
+const professor = {
+  id: id(1),
+  name: 'Marina',
+  email: 'm@example.com',
+  role: 'PROFESSOR',
+  avatarUrl: null,
+};
+const student = { id: id(2), name: 'Ana', email: 'a@example.com', role: 'ALUNO', avatarUrl: null };
 const discipline = {
   id: id(3),
   code: 'BD-204',
@@ -330,6 +336,93 @@ describe('app', () => {
     });
   });
 
+  describe('attachments', () => {
+    beforeEach(() => accessToken.set('token'));
+
+    const attachmentsPath = `/activities/${id(4)}/attachments`;
+    const attachment = {
+      id: id(7),
+      name: 'lista.pdf',
+      mimeType: 'application/pdf',
+      sizeBytes: 2048,
+      uploadedAt: '2026-11-24T10:00:00.000Z',
+    };
+
+    it('uploads only allowed files', async () => {
+      const requests = setup(professor, {
+        [`get ${attachmentsPath}`]: { data: [] },
+        [`post ${attachmentsPath}`]: { status: 201, data: attachment },
+      });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Anexos: Lista 1' }));
+      expect(await screen.findByText('Nenhum anexo.')).toBeInTheDocument();
+      const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+      expect(input).not.toBeNull();
+      if (!input) return;
+      const user = userEvent.setup({ applyAccept: false });
+      await user.upload(input, new File(['x'], 'a.html', { type: 'text/html' }));
+      expect(await screen.findByText(/Escolha um PDF/)).toBeInTheDocument();
+      expect(requests.some(({ method }) => method === 'post')).toBe(false);
+      await user.upload(input, new File(['%PDF-'], 'lista.pdf', { type: 'application/pdf' }));
+      expect(await screen.findByText('Arquivo anexado')).toBeInTheDocument();
+      expect(requests.find(({ method }) => method === 'post')?.data).toBeInstanceOf(FormData);
+    });
+
+    it('lets students download but not change attachments', async () => {
+      const requests = setup(student, {
+        [`get ${attachmentsPath}`]: { data: [attachment] },
+        [`get /attachments/${id(7)}/url`]: error(503, 'STORAGE_UNAVAILABLE', 'Indisponível'),
+      });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Anexos: Lista 1' }));
+      await userEvent.click(await screen.findByRole('button', { name: 'Baixar: lista.pdf' }));
+      expect(await screen.findByText('Indisponível')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Remover/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Adicionar arquivo' })).not.toBeInTheDocument();
+      expect(requests.some(({ url }) => url === `/attachments/${id(7)}/url`)).toBe(true);
+    });
+  });
+
+  describe('notifications', () => {
+    beforeEach(() => accessToken.set('token'));
+
+    it('shows deadlines and recent grades only when opened', async () => {
+      const now = Date.now();
+      const requests = setup(student, {
+        [`get /disciplines/${id(3)}/activities`]: {
+          data: [
+            { ...activities[0], dueAt: new Date(now + 2 * 86_400_000).toISOString() },
+            activities[1],
+          ],
+        },
+        [`get /disciplines/${id(3)}/grades/me`]: {
+          data: {
+            grades: [{ activityId: id(5), value: 8, updatedAt: new Date(now).toISOString() }],
+            average: 8,
+            status: 'APPROVED',
+          },
+        },
+      });
+      renderApp('/profile');
+      const bell = await screen.findByRole('button', { name: 'Abrir avisos' });
+      expect(requests.some(({ url }) => url?.endsWith('/grades/me'))).toBe(false);
+      await userEvent.click(bell);
+      expect(await screen.findByText('Lista 1 vence em 2 dias')).toBeInTheDocument();
+      expect(screen.getByText('Sua nota de Lista 2 foi lançada')).toBeInTheDocument();
+      expect(screen.getByText('2 avisos')).toBeInTheDocument();
+      await userEvent.keyboard('{Escape}');
+      expect(screen.queryByText('2 avisos')).not.toBeInTheDocument();
+    });
+
+    it('shows the empty state to professors without reading grades', async () => {
+      const requests = setup(professor);
+      renderApp('/profile');
+      await userEvent.click(await screen.findByRole('button', { name: 'Abrir avisos' }));
+      expect(await screen.findByText('Nenhum aviso agora')).toBeInTheDocument();
+      expect(requests.some(({ url }) => url?.includes('/grades'))).toBe(false);
+    });
+  });
+
   describe('grades', () => {
     beforeEach(() => accessToken.set('token'));
 
@@ -337,13 +430,16 @@ describe('app', () => {
     const person = { id: id(2), name: 'Ana', email: 'a@example.com' };
 
     it('saves only the changed grades', async () => {
-      let grades = [{ activityId: id(4), value: 6 }];
+      let grades = [{ activityId: id(4), value: 6, updatedAt: '2026-11-24T10:00:00.000Z' }];
       const requests = setup(professor, {
         [gradesPath]: () => ({
           data: [{ student: person, grades, average: 6, status: 'RECOVERY' }],
         }),
         [`put /activities/${id(5)}/grades/${id(2)}`]: () => {
-          grades = [...grades, { activityId: id(5), value: 8.5 }];
+          grades = [
+            ...grades,
+            { activityId: id(5), value: 8.5, updatedAt: '2026-11-24T10:00:00.000Z' },
+          ];
           return { data: { activityId: id(5), studentId: id(2), value: 8.5 } };
         },
       });
@@ -400,7 +496,7 @@ describe('app', () => {
           data: [
             {
               student: person,
-              grades: [{ activityId: id(4), value: 6 }],
+              grades: [{ activityId: id(4), value: 6, updatedAt: '2026-11-24T10:00:00.000Z' }],
               average: 6,
               status: 'RECOVERY',
             },
@@ -417,7 +513,7 @@ describe('app', () => {
       setup(student, {
         [`${gradesPath}/me`]: {
           data: {
-            grades: [{ activityId: id(4), value: 6 }],
+            grades: [{ activityId: id(4), value: 6, updatedAt: '2026-11-24T10:00:00.000Z' }],
             average: 6,
             status: 'RECOVERY',
           },

@@ -20,3 +20,19 @@ export function useChangePassword() {
     mutationFn: (input: ChangePasswordInput) => profileService.changePassword(input),
   });
 }
+
+export function useUploadAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => profileService.uploadAvatar({ file }),
+    onSuccess: (user) => queryClient.setQueryData(authKeys.me, user),
+  });
+}
+
+export function useRemoveAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => profileService.removeAvatar(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: authKeys.me }),
+  });
+}

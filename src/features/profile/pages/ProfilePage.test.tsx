@@ -12,6 +12,7 @@ const user = {
   name: 'Ana Souza',
   email: 'ana@example.com',
   role: 'ALUNO',
+  avatarUrl: null,
 };
 
 type Reply = { status?: number; data: unknown };
@@ -49,6 +50,30 @@ describe('ProfilePage', () => {
     renderApp('/profile');
     await userEvent.click(await screen.findByRole('button', { name: 'Salvar dados' }));
     expect(await screen.findByText('Em uso')).toBeInTheDocument();
+  });
+
+  it('previews, uploads and shows the photo', async () => {
+    URL.createObjectURL = () => 'blob:preview';
+    URL.revokeObjectURL = () => undefined;
+    const requests = mockApi(({ method }) =>
+      method === 'post'
+        ? { data: { ...user, avatarUrl: 'https://storage.test/a.webp' } }
+        : { data: user },
+    );
+    renderApp('/profile');
+    await screen.findByRole('button', { name: 'Escolher foto' });
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+    expect(input).not.toBeNull();
+    if (!input) return;
+    const actor = userEvent.setup({ applyAccept: false });
+    await actor.upload(input, new File(['x'], 'a.gif', { type: 'image/gif' }));
+    expect(await screen.findByText(/Escolha uma imagem/)).toBeInTheDocument();
+    await actor.upload(input, new File(['x'], 'a.png', { type: 'image/png' }));
+    expect(document.querySelector('img[src="blob:preview"]')).not.toBeNull();
+    await actor.click(screen.getByRole('button', { name: 'Enviar foto' }));
+    expect(await screen.findByText('Foto atualizada')).toBeInTheDocument();
+    expect(requests.find(({ method }) => method === 'post')?.data).toBeInstanceOf(FormData);
+    expect(document.querySelectorAll('img[src="https://storage.test/a.webp"]')).toHaveLength(2);
   });
 
   async function fillPassword(current: string, next: string, confirmation: string) {

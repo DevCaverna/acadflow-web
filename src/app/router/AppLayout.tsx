@@ -2,10 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
 import { useLogout } from '@/features/auth/hooks/useLogout';
 import type { User } from '@/features/auth/schemas/auth.schema';
+import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { Avatar } from '@/shared/components/Avatar';
 import { Icon, type IconName } from '@/shared/components/Icon';
 import { IconButton } from '@/shared/components/IconButton';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
+import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { Toaster } from '@/shared/components/Toaster';
 import { cn } from '@/shared/lib/cn';
 
@@ -30,7 +32,7 @@ export function AppLayout({ user }: AppLayoutProps) {
   ];
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="flex flex-col gap-4 border-line bg-white px-4 py-4 max-md:border-b md:sticky md:top-0 md:h-screen md:w-62 md:shrink-0 md:gap-8 md:border-r md:py-6">
+      <aside className="flex flex-col gap-4 border-line bg-surface px-4 py-4 max-md:border-b md:sticky md:top-0 md:h-screen md:w-62 md:shrink-0 md:gap-8 md:border-r md:py-6">
         <div className="flex items-center gap-2.5 px-2">
           <img src="/icons/icon-simple.svg" alt="" width={36} height={36} />
           <span className="font-display text-xl font-bold tracking-tight">{t('appName')}</span>
@@ -46,7 +48,7 @@ export function AppLayout({ user }: AppLayoutProps) {
               className={({ isActive }) =>
                 cn(
                   'flex h-11 items-center gap-3 rounded-button px-3 text-[15px] font-medium text-muted hover:bg-canvas',
-                  isActive && 'bg-primary-soft font-semibold text-primary-hover',
+                  isActive && 'bg-primary-soft font-semibold text-link-strong',
                 )
               }
             >
@@ -55,9 +57,13 @@ export function AppLayout({ user }: AppLayoutProps) {
             </NavLink>
           ))}
         </nav>
-        <LanguageSelector />
+        <div className="flex items-center gap-2">
+          <LanguageSelector className="min-w-0 flex-1" />
+          <NotificationBell isStudent={user.role === 'ALUNO'} />
+          <ThemeToggle />
+        </div>
         <div className="flex items-center gap-3 rounded-xl border border-line p-3">
-          <Avatar name={user.name} />
+          <Avatar name={user.name} src={user.avatarUrl} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{user.name}</p>
             <p className="text-[11px] font-bold tracking-[0.08em] text-muted uppercase">

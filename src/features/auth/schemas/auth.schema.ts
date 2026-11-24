@@ -5,6 +5,7 @@ export const userSchema = z.object({
   name: z.string(),
   email: z.string(),
   role: z.enum(['PROFESSOR', 'ALUNO']),
+  avatarUrl: z.string().nullable(),
 });
 
 export const sessionSchema = z.object({ accessToken: z.string().min(1), user: userSchema });

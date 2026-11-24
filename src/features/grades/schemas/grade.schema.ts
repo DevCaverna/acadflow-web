@@ -9,7 +9,9 @@ export const gradeSchema = z.object({
 });
 
 export const gradeSummarySchema = z.object({
-  grades: z.array(z.object({ activityId: z.uuid(), value: valueSchema })),
+  grades: z.array(
+    z.object({ activityId: z.uuid(), value: valueSchema, updatedAt: z.iso.datetime() }),
+  ),
   average: valueSchema.nullable(),
   status: z.enum(['NO_GRADES', 'APPROVED', 'RECOVERY', 'FAILED']),
 });

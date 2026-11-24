@@ -37,5 +37,9 @@
     "ALUNO": "Student area"
   },
   "breadcrumb": "Breadcrumb",
-  "closeNotice": "Close notice"
+  "closeNotice": "Close notice",
+  "theme": {
+    "dark": "Use dark theme",
+    "light": "Use light theme"
+  }
 }

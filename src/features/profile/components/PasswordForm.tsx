@@ -36,7 +36,7 @@ export function PasswordForm() {
   return (
     <form
       noValidate
-      className="flex flex-col gap-4.5 rounded-panel border border-line bg-white p-6"
+      className="flex flex-col gap-4.5 rounded-panel border border-line bg-surface p-6"
       onSubmit={(event) => void handleSubmit(submit)(event)}
     >
       <h2 className="text-lg font-semibold">{t('changePassword')}</h2>

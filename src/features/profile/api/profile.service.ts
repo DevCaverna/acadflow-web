@@ -15,6 +15,14 @@ export class ProfileService {
     return this.api.patch({ url: this.baseUrl, schema: userSchema, body });
   }
 
+  uploadAvatar({ file }: { file: File }): Promise<User> {
+    return this.api.upload({ url: `${this.baseUrl}/avatar`, schema: userSchema, file });
+  }
+
+  removeAvatar(): Promise<void> {
+    return this.api.delete({ url: `${this.baseUrl}/avatar` });
+  }
+
   async changePassword(body: ChangePasswordInput): Promise<void> {
     await this.api.patch({ url: `${this.baseUrl}/password`, schema: z.unknown(), body });
   }

@@ -13,7 +13,7 @@ export function Toaster() {
         <div
           key={id}
           role="status"
-          className="flex items-start gap-3 rounded-xl border border-line bg-white px-4 py-3.5 text-sm shadow-xl"
+          className="flex items-start gap-3 rounded-xl border border-line bg-surface px-4 py-3.5 text-sm shadow-xl"
         >
           <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-success-soft text-success">
             <Icon name="check" className="size-3.5 stroke-3" />

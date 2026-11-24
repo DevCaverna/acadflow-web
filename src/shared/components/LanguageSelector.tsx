@@ -14,7 +14,7 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
   return (
     <select
       aria-label={t('language')}
-      className={cn('rounded-field border border-line bg-white px-3 py-2 text-sm', className)}
+      className={cn('rounded-field border border-line bg-surface px-3 py-2 text-sm', className)}
       value={i18n.resolvedLanguage}
       onChange={(event) => void i18n.changeLanguage(event.target.value)}
     >

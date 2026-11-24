@@ -103,7 +103,7 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
         <select
           value={filter}
           onChange={(event) => setFilter(event.target.value as Filter)}
-          className="h-11 rounded-button border border-field bg-white px-3 text-[15px] text-ink"
+          className="h-11 rounded-button border border-field bg-surface px-3 text-[15px] text-ink"
         >
           {FILTERS.map((option) => (
             <option key={option} value={option}>
@@ -112,7 +112,7 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
           ))}
         </select>
       </label>
-      <div className="overflow-x-auto rounded-card border border-line bg-white">
+      <div className="overflow-x-auto rounded-card border border-line bg-surface">
         <table className="w-full text-sm">
           <thead className="bg-canvas text-left text-xs text-muted">
             <tr>
@@ -194,7 +194,7 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
       </div>
       <p className="text-sm text-muted">{t('rule')}</p>
       {changes.length > 0 && (
-        <div className="sticky bottom-4 flex flex-wrap items-center justify-between gap-3 rounded-card bg-ink px-5 py-3 text-white">
+        <div className="sticky bottom-4 flex flex-wrap items-center justify-between gap-3 rounded-card bg-inverse px-5 py-3 text-white">
           <span role="status">{t('pending', { count: changes.length })}</span>
           <div className="flex gap-3">
             <Button variant="secondary" disabled={save.isPending} onClick={() => setEdits({})}>

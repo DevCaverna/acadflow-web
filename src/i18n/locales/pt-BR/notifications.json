@@ -1,0 +1,12 @@
+{
+  "title": "Avisos recentes",
+  "open": "Abrir avisos",
+  "count_one": "{{count}} aviso",
+  "count_other": "{{count}} avisos",
+  "empty": "Nenhum aviso agora",
+  "emptyHint": "Prazos dos próximos 7 dias e notas recentes aparecem aqui.",
+  "footer": "Gerados a partir de prazos e notas. Atualizados ao abrir o sino.",
+  "due_one": "{{activity}} vence em {{count}} dia",
+  "due_other": "{{activity}} vence em {{count}} dias",
+  "grade": "Sua nota de {{activity}} foi lançada"
+}

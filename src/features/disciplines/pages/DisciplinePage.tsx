@@ -37,7 +37,7 @@ export function DisciplinePage() {
                 <h1 className="font-display text-[32px] leading-10 font-bold wrap-anywhere">
                   {discipline.name}
                 </h1>
-                <span className="rounded-field bg-primary-soft px-2 py-1 text-xs font-semibold text-primary-hover">
+                <span className="rounded-field bg-primary-soft px-2 py-1 text-xs font-semibold text-link-strong">
                   {discipline.code}
                 </span>
               </div>
@@ -50,7 +50,7 @@ export function DisciplinePage() {
             <div className="flex flex-wrap gap-2">
               <Link
                 to={`/grades?discipline=${discipline.id}`}
-                className="inline-flex h-10 items-center rounded-button border border-field bg-white px-4.5 text-sm font-semibold hover:bg-canvas"
+                className="inline-flex h-10 items-center rounded-button border border-field bg-surface px-4.5 text-sm font-semibold hover:bg-canvas"
               >
                 {isProfessor ? t('grades:entryTitle') : t('grades:mineTitle')}
               </Link>
@@ -71,7 +71,12 @@ export function DisciplinePage() {
               )}
             </div>
           </header>
-          <div className={cn('grid items-start gap-6', isProfessor && 'xl:grid-cols-[2fr_1fr]')}>
+          <div
+            className={cn(
+              'grid items-start gap-6',
+              isProfessor && 'xl:grid-cols-[minmax(0,1fr)_300px]',
+            )}
+          >
             <ActivityList discipline={discipline} canEdit={isProfessor} />
             {isProfessor && <StudentList disciplineId={discipline.id} />}
           </div>

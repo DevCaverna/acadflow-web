@@ -16,8 +16,8 @@ type EmptyStateProps = {
 /** Estado vazio de listas e painéis. */
 export function EmptyState({ icon, title, text, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-panel border border-dashed border-field bg-white px-7 py-9 text-center">
-      <span className="inline-flex size-14 items-center justify-center rounded-full bg-primary-soft text-primary">
+    <div className="flex flex-col items-center gap-3 rounded-panel border border-dashed border-field bg-surface px-7 py-9 text-center">
+      <span className="inline-flex size-14 items-center justify-center rounded-full bg-primary-soft text-link">
         <Icon name={icon} className="size-6.5" />
       </span>
       <p className="text-lg font-semibold">{title}</p>

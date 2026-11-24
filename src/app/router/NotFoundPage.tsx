@@ -16,14 +16,14 @@ export function NotFoundPage() {
             <svg width="220" height="150" viewBox="0 0 220 150" className="stroke-primary stroke-4">
               <path
                 d="M20 36C56 22 90 26 110 42V134C90 118 56 114 20 128Z"
-                className="fill-white"
+                className="fill-surface"
               />
               <path
                 d="M110 42C130 26 164 22 200 36V128C164 114 130 118 110 134Z"
                 className="fill-primary-soft"
               />
             </svg>
-            <span className="absolute inset-x-0 top-14 font-display text-[44px] font-bold text-primary">
+            <span className="absolute inset-x-0 top-14 font-display text-[44px] font-bold text-link">
               404
             </span>
           </div>
