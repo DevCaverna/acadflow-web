@@ -1,5 +1,30 @@
 {
   "title": "Activities",
   "dueAt": "Due date",
-  "noDueDate": "No due date"
+  "noDueDate": "No due date",
+  "empty": "No activities yet.",
+  "new": "New activity",
+  "editTitle": "Edit activity",
+  "name": "Title",
+  "description": "Description",
+  "status": {
+    "open": "Open",
+    "dueSoon_one": "Due in {{count}} day",
+    "dueSoon_other": "Due in {{count}} days",
+    "closed": "Closed"
+  },
+  "visible": "The activity is visible to enrolled students as soon as it is created.",
+  "removeConfirm": "Delete the activity {{title}}? Only possible without grades.",
+  "emptyTitle": "No activities yet",
+  "emptyHint": "Create the first activity of this course to start grading.",
+  "column": "Activity",
+  "deadline": "Deadline",
+  "graded": "Graded",
+  "actions": "Actions",
+  "created": "Activity created",
+  "updated": "Activity updated",
+  "removed": "Activity deleted",
+  "removeTitle": "Delete activity?",
+  "pastDate": "Choose a date from now on.",
+  "descriptionPlaceholder": "Instructions and criteria"
 }

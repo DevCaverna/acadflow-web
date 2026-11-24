@@ -1,4 +1,10 @@
 {
   "unexpected": "Ocorreu um erro inesperado.",
-  "network": "Sem conexão com o servidor."
+  "network": "Sem conexão com o servidor.",
+  "validation": {
+    "required": "Campo obrigatório",
+    "email": "Informe um e-mail válido",
+    "semester": "Use o formato 2026.1 ou 2026.2",
+    "tooLong": "Texto muito longo"
+  }
 }

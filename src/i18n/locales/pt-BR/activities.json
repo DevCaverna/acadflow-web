@@ -1,5 +1,30 @@
 {
   "title": "Atividades",
-  "dueAt": "Prazo",
-  "noDueDate": "Sem prazo"
+  "dueAt": "Data limite",
+  "noDueDate": "Sem prazo",
+  "empty": "Nenhuma atividade cadastrada.",
+  "new": "Nova atividade",
+  "editTitle": "Editar atividade",
+  "name": "Título",
+  "description": "Descrição",
+  "status": {
+    "open": "Aberta",
+    "dueSoon_one": "Vence em {{count}} dia",
+    "dueSoon_other": "Vence em {{count}} dias",
+    "closed": "Prazo encerrado"
+  },
+  "visible": "A atividade fica visível para os alunos matriculados assim que for criada.",
+  "removeConfirm": "Excluir a atividade {{title}}? Só é possível sem notas lançadas.",
+  "emptyTitle": "Nenhuma atividade ainda",
+  "emptyHint": "Crie a primeira atividade desta disciplina para começar a lançar notas.",
+  "column": "Atividade",
+  "deadline": "Prazo",
+  "graded": "Com nota",
+  "actions": "Ações",
+  "created": "Atividade criada",
+  "updated": "Atividade atualizada",
+  "removed": "Atividade excluída",
+  "removeTitle": "Excluir atividade?",
+  "pastDate": "Escolha uma data a partir de agora.",
+  "descriptionPlaceholder": "Instruções e critérios"
 }
