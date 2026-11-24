@@ -25,10 +25,10 @@ export function SessionExpiredDialog() {
         event.preventDefault();
         accessToken.clear();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-115 rounded-panel bg-white p-8 text-ink shadow-2xl backdrop:bg-ink/60"
+      className="m-auto w-[calc(100%-2rem)] max-w-115 rounded-panel bg-surface p-8 text-ink shadow-2xl backdrop:bg-black/60"
     >
       <div className="flex flex-col items-center gap-4 text-center">
-        <span className="inline-flex size-14 items-center justify-center rounded-full bg-primary-soft text-primary">
+        <span className="inline-flex size-14 items-center justify-center rounded-full bg-primary-soft text-link">
           <Icon name="lock" className="size-6.5" />
         </span>
         <h2 id="session-title" className="font-display text-2xl font-bold">

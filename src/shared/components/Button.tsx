@@ -4,8 +4,8 @@ import { cn } from '@/shared/lib/cn';
 
 const VARIANTS = {
   primary: 'bg-primary text-white enabled:hover:bg-primary-hover enabled:active:bg-primary-active',
-  secondary: 'border border-field bg-white text-ink enabled:hover:bg-canvas',
-  danger: 'bg-danger text-white enabled:hover:bg-danger-hover',
+  secondary: 'border border-field bg-surface text-ink enabled:hover:bg-canvas',
+  danger: 'bg-danger-fill text-white enabled:hover:bg-danger-hover',
 };
 
 /** Props de {@link Button}. */

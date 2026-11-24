@@ -13,5 +13,14 @@
   "passwordPlaceholder": "Mín. 8 caracteres",
   "passwordTooShort": "Use pelo menos 8 caracteres.",
   "passwordMismatch": "As senhas não são iguais.",
-  "passwordChanged": "Senha alterada"
+  "passwordChanged": "Senha alterada",
+  "photo": "Foto de perfil",
+  "choosePhoto": "Escolher foto",
+  "sendPhoto": "Enviar foto",
+  "removePhoto": "Remover foto",
+  "photoHint": "PNG, JPG ou WebP, até 2 MB.",
+  "photoSaved": "Foto atualizada",
+  "photoRemoved": "Foto removida",
+  "photoInvalid": "Escolha uma imagem PNG, JPG ou WebP de até 2 MB.",
+  "photoPreview": "Prévia da foto"
 }

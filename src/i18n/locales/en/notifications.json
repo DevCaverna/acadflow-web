@@ -1,0 +1,12 @@
+{
+  "title": "Recent notices",
+  "open": "Open notices",
+  "count_one": "{{count}} notice",
+  "count_other": "{{count}} notices",
+  "empty": "No notices now",
+  "emptyHint": "Deadlines in the next 7 days and recent grades appear here.",
+  "footer": "Generated from deadlines and grades. Updated when the bell opens.",
+  "due_one": "{{activity}} is due in {{count}} day",
+  "due_other": "{{activity}} is due in {{count}} days",
+  "grade": "Your grade for {{activity}} was posted"
+}

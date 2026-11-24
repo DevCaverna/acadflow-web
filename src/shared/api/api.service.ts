@@ -68,6 +68,21 @@ export class ApiService {
     return schema.parse(data);
   }
 
+  async upload<Schema extends z.ZodType>({
+    url,
+    schema,
+    file,
+  }: {
+    url: string;
+    schema: Schema;
+    file: File;
+  }): Promise<z.output<Schema>> {
+    const body = new FormData();
+    body.append('file', file);
+    const { data } = await this.http.post<unknown>(url, body);
+    return schema.parse(data);
+  }
+
   async delete({ url }: { url: string }): Promise<void> {
     await this.http.delete(url);
   }

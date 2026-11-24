@@ -48,7 +48,7 @@ export function MyGrades({ discipline }: MyGradesProps) {
             const ring = `conic-gradient(${RING_COLORS[status]} ${(average ?? 0) * DEGREES_PER_POINT}deg, var(--color-subtle) 0)`;
             return (
               <div className="grid items-start gap-6 lg:grid-cols-[1fr_2fr]">
-                <section className="flex flex-col gap-4.5 rounded-panel border border-line bg-white p-6">
+                <section className="flex flex-col gap-4.5 rounded-panel border border-line bg-surface p-6">
                   <div className="flex flex-col gap-1">
                     <h2 className="text-lg font-semibold wrap-anywhere">{discipline.name}</h2>
                     <p className="text-sm text-muted">{discipline.professor.name}</p>
@@ -60,7 +60,7 @@ export function MyGrades({ discipline }: MyGradesProps) {
                       className="flex size-28 shrink-0 items-center justify-center rounded-full"
                       style={{ background: ring }}
                     >
-                      <span className="flex size-22 flex-col items-center justify-center rounded-full bg-white">
+                      <span className="flex size-22 flex-col items-center justify-center rounded-full bg-surface">
                         <span className="font-display text-3xl leading-none font-bold">
                           {averageText}
                         </span>
@@ -94,14 +94,14 @@ export function MyGrades({ discipline }: MyGradesProps) {
                     action={
                       <Link
                         to={`/disciplines/${discipline.id}`}
-                        className="text-sm font-semibold text-primary"
+                        className="text-sm font-semibold text-link"
                       >
                         {t('seeActivities')}
                       </Link>
                     }
                   />
                 ) : (
-                  <section className="overflow-hidden rounded-panel border border-line bg-white">
+                  <section className="overflow-hidden rounded-panel border border-line bg-surface">
                     <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-6 py-5">
                       <h2 className="font-display text-xl font-semibold">{t('byActivity')}</h2>
                       <span className="text-[13px] text-muted">{t('approvalLine')}</span>

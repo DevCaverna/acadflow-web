@@ -37,5 +37,9 @@
     "ALUNO": "Área do aluno"
   },
   "breadcrumb": "Trilha",
-  "closeNotice": "Fechar aviso"
+  "closeNotice": "Fechar aviso",
+  "theme": {
+    "dark": "Usar tema escuro",
+    "light": "Usar tema claro"
+  }
 }

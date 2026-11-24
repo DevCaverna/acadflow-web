@@ -26,5 +26,17 @@
   "removed": "Activity deleted",
   "removeTitle": "Delete activity?",
   "pastDate": "Choose a date from now on.",
-  "descriptionPlaceholder": "Instructions and criteria"
+  "descriptionPlaceholder": "Instructions and criteria",
+  "attachments": {
+    "title": "Attachments",
+    "empty": "No attachments.",
+    "add": "Add file",
+    "hint": "PDF, PNG or JPG, up to 10 MB.",
+    "invalid": "Choose a PDF, PNG or JPG up to 10 MB.",
+    "added": "File attached",
+    "removed": "Attachment removed",
+    "download": "Download",
+    "remove": "Remove",
+    "confirm": "Remove {{name}}?"
+  }
 }

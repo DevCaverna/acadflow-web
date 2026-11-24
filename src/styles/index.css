@@ -7,6 +7,11 @@
   --color-primary-hover: #2436a8;
   --color-primary-active: #1c2a8c;
   --color-accent: #f2a93b;
+  --color-surface: #ffffff;
+  --color-inverse: #151826;
+  --color-link: #2e43c8;
+  --color-link-strong: #2436a8;
+  --color-danger-fill: #c0322a;
   --color-ink: #151826;
   --color-muted: #5a6072;
   --color-line: #e4e6ee;
@@ -34,6 +39,38 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-primary: #4a5fe0;
+    --color-primary-hover: #3d50cc;
+    --color-primary-active: #3244b8;
+    --color-surface: #1a1f2e;
+    --color-inverse: #2d3447;
+    --color-link: #a9b6ff;
+    --color-link-strong: #c3ccff;
+    --color-ink: #eceef6;
+    --color-muted: #a3a9bd;
+    --color-line: #2d3447;
+    --color-canvas: #10131c;
+    --color-success: #5fd39a;
+    --color-danger: #ff8f87;
+    --color-danger-soft: #43201f;
+    --color-danger-ink: #ffb4ae;
+    --color-success-soft: #163528;
+    --color-warning: #f5c36b;
+    --color-warning-soft: #40300f;
+    --color-warning-ink: #f9dca6;
+    --color-primary-soft: #232b55;
+    --color-primary-muted: #2f3970;
+    --color-subtle: #242a3b;
+    --color-skeleton: #2a3144;
+    --color-field: #454d66;
+  }
+
   button:not(:disabled) {
     cursor: pointer;
   }

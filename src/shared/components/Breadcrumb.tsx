@@ -17,7 +17,7 @@ export function Breadcrumb({ links, current }: BreadcrumbProps) {
     <nav aria-label={t('breadcrumb')} className="flex flex-wrap gap-2 text-sm text-muted">
       {links.map(({ to, label }) => (
         <Fragment key={to}>
-          <Link to={to} className="text-primary hover:text-primary-hover">
+          <Link to={to} className="text-link hover:text-link-strong">
             {label}
           </Link>
           <span aria-hidden="true">/</span>

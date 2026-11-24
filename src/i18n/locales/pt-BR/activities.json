@@ -26,5 +26,17 @@
   "removed": "Atividade excluída",
   "removeTitle": "Excluir atividade?",
   "pastDate": "Escolha uma data a partir de agora.",
-  "descriptionPlaceholder": "Instruções e critérios"
+  "descriptionPlaceholder": "Instruções e critérios",
+  "attachments": {
+    "title": "Anexos",
+    "empty": "Nenhum anexo.",
+    "add": "Adicionar arquivo",
+    "hint": "PDF, PNG ou JPG, até 10 MB.",
+    "invalid": "Escolha um PDF, PNG ou JPG de até 10 MB.",
+    "added": "Arquivo anexado",
+    "removed": "Anexo removido",
+    "download": "Baixar",
+    "remove": "Remover",
+    "confirm": "Remover {{name}}?"
+  }
 }

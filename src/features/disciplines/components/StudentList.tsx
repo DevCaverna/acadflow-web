@@ -35,7 +35,7 @@ export function StudentList({ disciplineId }: StudentListProps) {
     <>
       <QueryState query={query}>
         {(students) => (
-          <aside className="overflow-hidden rounded-card border border-line bg-white">
+          <aside className="overflow-hidden rounded-card border border-line bg-surface">
             <header className="flex items-center justify-between border-b border-line px-5 py-4.5">
               <h2 className="font-display text-lg font-semibold">{t('students')}</h2>
               <span className="flex items-center gap-3 text-[13px] text-muted">
@@ -76,7 +76,7 @@ export function StudentList({ disciplineId }: StudentListProps) {
             )}
             <Link
               to={`/grades?discipline=${disciplineId}`}
-              className="flex h-12 items-center justify-center text-sm font-semibold text-primary"
+              className="flex h-12 items-center justify-center text-sm font-semibold text-link"
             >
               {t('grades:openGrades')}
             </Link>

@@ -21,7 +21,7 @@ export function Alert({ children, variant = 'error' }: AlertProps) {
       role={isError ? 'alert' : 'note'}
       className={cn(
         'flex items-start gap-3 rounded-xl px-4 py-3.5 text-sm',
-        isError ? 'bg-danger-soft text-danger-ink' : 'bg-primary-soft text-primary-active',
+        isError ? 'bg-danger-soft text-danger-ink' : 'bg-primary-soft text-link-strong',
       )}
     >
       <Icon name={isError ? 'alert' : 'info'} />

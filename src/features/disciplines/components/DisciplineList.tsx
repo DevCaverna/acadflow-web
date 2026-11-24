@@ -66,10 +66,10 @@ export function DisciplineList({
               {data.map(({ id, code, name, semester, description, professor }) => (
                 <li
                   key={id}
-                  className="flex flex-col gap-3.5 rounded-card border border-line bg-white p-5.5"
+                  className="flex flex-col gap-3.5 rounded-card border border-line bg-surface p-5.5"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="rounded-field bg-primary-soft px-2 py-1 text-xs font-semibold text-primary-hover">
+                    <span className="rounded-field bg-primary-soft px-2 py-1 text-xs font-semibold text-link-strong">
                       {code}
                     </span>
                     <span className="text-[13px] text-muted">{semester}</span>

@@ -13,6 +13,7 @@ import { Button } from '@/shared/components/Button';
 import { Field } from '@/shared/components/Field';
 import { Icon } from '@/shared/components/Icon';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
+import { ThemeToggle } from '@/shared/components/ThemeToggle';
 
 const FEATURES = ['disciplines', 'grades', 'access'] as const;
 
@@ -31,7 +32,7 @@ export function LoginPage() {
 
   const passwordLabel = passwordVisible ? t('hidePassword') : t('showPassword');
   return (
-    <div className="flex min-h-screen flex-col bg-white md:flex-row">
+    <div className="flex min-h-screen flex-col bg-surface md:flex-row">
       <section className="flex flex-1 flex-col justify-between gap-8 bg-primary p-6 text-white md:gap-12 md:p-14">
         <span className="flex items-center gap-3 font-display text-2xl font-bold tracking-tight">
           <img src="/icons/icon-light.svg" alt="" width={48} height={48} />
@@ -41,7 +42,7 @@ export function LoginPage() {
           <p className="font-display text-3xl leading-[1.08] font-bold tracking-tight md:text-5xl">
             {t('headline')}
           </p>
-          <p className="text-primary-muted md:text-[17px]">{t('intro')}</p>
+          <p className="text-white/85 md:text-[17px]">{t('intro')}</p>
         </div>
         <ul className="flex flex-col gap-3.5 max-md:hidden">
           {FEATURES.map((feature) => (
@@ -95,7 +96,10 @@ export function LoginPage() {
           <Button type="submit" loading={login.isPending} className="h-12 text-base">
             {t('signIn')}
           </Button>
-          <LanguageSelector />
+          <div className="flex items-center gap-2">
+            <LanguageSelector className="min-w-0 flex-1" />
+            <ThemeToggle />
+          </div>
         </form>
       </main>
       {expired && <SessionExpiredDialog />}

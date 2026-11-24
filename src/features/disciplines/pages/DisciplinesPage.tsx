@@ -33,7 +33,7 @@ export function DisciplinesPage() {
           maxLength={120}
           value={filters.search}
           onChange={(event) => setFilters({ search: event.target.value, page: 1 })}
-          className="h-11 w-full rounded-button border border-field bg-white pr-3.5 pl-10.5 text-[15px]"
+          className="h-11 w-full rounded-button border border-field bg-surface pr-3.5 pl-10.5 text-[15px]"
         />
       </div>
       <DisciplineList
