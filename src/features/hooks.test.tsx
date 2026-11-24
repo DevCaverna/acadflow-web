@@ -26,7 +26,13 @@ describe('feature hooks', () => {
   afterEach(() => accessToken.clear());
 
   it('stores the session on login and clears it on logout', async () => {
-    const user = { id: ID, name: 'Ana', email: 'ana@example.com', role: 'PROFESSOR' };
+    const user = {
+      id: ID,
+      name: 'Ana',
+      email: 'ana@example.com',
+      role: 'PROFESSOR',
+      avatarUrl: null,
+    };
     mockApi(() => ({ data: { accessToken: 'token', user } }));
     const { queryClient, wrapper } = createQueryWrapper();
     const login = renderHook(() => useLogin(), { wrapper });

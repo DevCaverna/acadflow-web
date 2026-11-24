@@ -8,7 +8,7 @@
 type Role = 'PROFESSOR' | 'ALUNO';
 type GradeStatus = 'NO_GRADES' | 'APPROVED' | 'RECOVERY' | 'FAILED';
 
-type User = { id: string; name: string; email: string; role: Role };
+type User = { id: string; name: string; email: string; role: Role; avatarUrl: string | null };
 type Session = { accessToken: string; user: User };
 type Discipline = {
   id: string;
@@ -27,7 +27,7 @@ type Activity = {
 };
 type Grade = { activityId: string; studentId: string; value: number };
 type GradeSummary = {
-  grades: Array<{ activityId: string; value: number }>;
+  grades: Array<{ activityId: string; value: number; updatedAt: string }>;
   average: number | null;
   status: GradeStatus;
 };
@@ -70,5 +70,9 @@ IDs são UUID v7. Erros seguem `ApiError`; em `VALIDATION_ERROR`, `message` reú
 ### Matrículas
 
 `GET /disciplines/:id/students/candidates?search=` (mínimo 3 letras), `POST` e `DELETE /disciplines/:id/students/:studentId`. Matrícula repetida ou aluno com notas retorna `409`.
+
+### Arquivos
+
+`POST`/`DELETE /users/me/avatar`, `GET`/`POST /activities/:id/attachments`, `GET /attachments/:id/url` e `DELETE /attachments/:id`. Envio em multipart, campo `file`. Sem armazenamento, `503 STORAGE_UNAVAILABLE`.
 
 Os mocks reproduzem esses formatos, sem tratar regras de permissão como segurança real.
