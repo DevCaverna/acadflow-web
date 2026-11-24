@@ -1,0 +1,21 @@
+# Code Owners — AcadFlow Web
+# Define revisores automáticos por área crítica (Controle de Mudanças / GCS)
+
+*                               @OtavioGonzaga @aqu1no1
+
+# Pipelines CI/CD, releases e scripts de deploy
+/.github/                       @aqu1no1
+/docker/                        @aqu1no1
+/scripts/                       @aqu1no1
+
+# Núcleo de aplicação, API client, tema e rotas
+/src/app/                       @OtavioGonzaga @aqu1no1
+/src/shared/                    @OtavioGonzaga @aqu1no1
+/src/features/                  @OtavioGonzaga @aqu1no1
+/src/i18n/                      @OtavioGonzaga
+/src/styles/                    @OtavioGonzaga
+
+# Contratos mock e documentação
+/docs/contratos-mock.md         @OtavioGonzaga @aqu1no1 @Vinicius-Antonio
+/docs/                          @Vinicius-Antonio @OtavioGonzaga
+

@@ -16,7 +16,9 @@ O professor gerencia disciplinas, atividades e notas, e o aluno acompanha ativid
 
 ## Demonstração
 
-Será adicionada quando as primeiras telas estiverem prontas. As telas projetadas estão em [acadflow-design](https://github.com/DevCaverna/acadflow-design).
+A aplicação contempla as jornadas completas de **Professor** (gestão de disciplinas, atividades, anexos, matrículas e grade editável de notas) e **Aluno** (acompanhamento de prazos, download de materiais e cálculo de média parcial com meta `7,0`), com suporte a tema claro/escuro e idiomas `pt-BR` / `en`.
+
+Consulte o [Manual do Usuário](docs/manual-do-usuario.md) para o passo a passo das telas e [acadflow-design](https://github.com/DevCaverna/acadflow-design) para as pranchas visuais de referência.
 
 ## Como executar
 
@@ -30,17 +32,25 @@ pnpm dev
 
 ## Documentação
 
-| Página                                                                                     | O que tem                                |
-| ------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto         |
-| [Execução](docs/execucao/README.md)                                                        | Como rodar, testar e resolver problemas  |
-| [Arquitetura](docs/arquitetura.md)                                                         | Organização e decisões                   |
-| [Configuração](docs/configuracao.md)                                                       | Variáveis de ambiente                    |
-| [Testes](docs/testes.md)                                                                   | Tipos de teste e comandos                |
-| [CI](docs/CI.md)                                                                           | Pipeline e branches                      |
-| [Qualidade e editores](docs/qualidade-e-editores.md)                                       | Oxlint, Oxfmt, TypeScript, VS Code e Zed |
-| [Contratos para mocks](docs/contratos-mock.md)                                             | Tipos e rotas da API                     |
-| [AGENTS.md](AGENTS.md)                                                                     | Diretrizes para colaboradores e agentes  |
+| Página                                                                                     | O que tem                                         |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto                  |
+| [Execução](docs/execucao/README.md)                                                        | Como rodar, testar e resolver problemas           |
+| [Deploy](docs/execucao/deploy.md)                                                          | Releases e deploy (GHCR, Docker/Nginx e VPS)      |
+| [Manual do Usuário](docs/manual-do-usuario.md)                                             | Guia funcional para Professor e Aluno             |
+| [Arquitetura](docs/arquitetura.md)                                                         | Camadas, gestão de estado e fluxos Mermaid        |
+| [Design System](docs/design-system.md)                                                     | Tokens light/dark e catálogo de 17 componentes    |
+| [Rastreabilidade](docs/rastreabilidade.md)                                                 | Mapa Design × Web × API                           |
+| [ADRs](docs/adr/README.md)                                                                 | Registros de decisões arquiteturais               |
+| [Configuração](docs/configuracao.md)                                                       | Variáveis de ambiente                             |
+| [Testes](docs/testes.md)                                                                   | Tipos de teste e comandos                         |
+| [CI](docs/CI.md)                                                                           | Pipeline e branches                               |
+| [Gerência de Configuração](docs/gerencia-de-configuracao.md)                               | Plano GCS (IEEE 828), baselines, hotfix e FCA/PCA |
+| [Qualidade e editores](docs/qualidade-e-editores.md)                                       | Oxlint, Oxfmt, TypeScript, VS Code e Zed          |
+| [Contratos para mocks](docs/contratos-mock.md)                                             | Tipos e rotas da API                              |
+| [AGENTS.md](AGENTS.md)                                                                     | Diretrizes para colaboradores e agentes           |
+| [Changelog](CHANGELOG.md)                                                                  | Histórico de entregas                             |
+| [Segurança](SECURITY.md)                                                                   | Política de segurança e reporte                   |
 
 ## Repositórios
 
