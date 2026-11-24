@@ -112,7 +112,18 @@ pnpm pr
 
 - Abrir issue `ACA-*`, descrever plano e desenvolver somente dentro do escopo aprovado.
 - Branch: `feature/ACA-<numero>-slug` a partir de `develop`. Promoção `develop` → `staging` → `main`, com reviews.
-- Conventional Commits em inglês: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, `ci:`.
+- Conventional Commits em inglês, com mensagem curta no formato `<prefixo>: <descrição>`:
+
+  | Prefixo     | Quando usar                |
+  | ----------- | -------------------------- |
+  | `feat:`     | Nova funcionalidade        |
+  | `fix:`      | Correção de bug            |
+  | `refactor:` | Refatoração                |
+  | `test:`     | Adição ou ajuste de testes |
+  | `docs:`     | Documentação               |
+  | `chore:`    | Manutenção e configurações |
+  | `ci:`       | Pipelines e GitHub Actions |
+
 - PR usa `.github/PULL_REQUEST_TEMPLATE.md`, link do Linear, tela no design, evidências de responsividade e testes executados.
 - Alteração de contrato HTTP exige alinhar `docs/contratos-mock.md` com `acadflow-api/docs/contratos-api.md` antes de integrar.
 - Não editar o repositório da API ou design sem solicitação explícita; reportar dependências, sem bloquear trabalho com mocks.
