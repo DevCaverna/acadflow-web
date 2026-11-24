@@ -2,9 +2,9 @@
   "title": "Grades",
   "average": "Average",
   "status": {
-    "APROVADO": "Approved",
-    "RECUPERACAO": "Recovery",
-    "REPROVADO": "Failed",
-    "SEM_NOTAS": "No grades"
+    "APPROVED": "Approved",
+    "RECOVERY": "Recovery",
+    "FAILED": "Failed",
+    "NO_GRADES": "No grades"
   }
 }

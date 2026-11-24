@@ -11,7 +11,7 @@ export const gradeSchema = z.object({
 export const gradeSummarySchema = z.object({
   grades: z.array(z.object({ activityId: z.uuid(), value: valueSchema })),
   average: valueSchema.nullable(),
-  status: z.enum(['SEM_NOTAS', 'APROVADO', 'RECUPERACAO', 'REPROVADO']),
+  status: z.enum(['NO_GRADES', 'APPROVED', 'RECOVERY', 'FAILED']),
 });
 
 export const studentGradesSchema = gradeSummarySchema.extend({

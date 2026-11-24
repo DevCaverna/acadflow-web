@@ -41,7 +41,7 @@ describe('feature hooks', () => {
 
   it('sends the language and the token', async () => {
     accessToken.set('token');
-    const requests = mockApi(() => ({ data: { grades: [], average: null, status: 'SEM_NOTAS' } }));
+    const requests = mockApi(() => ({ data: { grades: [], average: null, status: 'NO_GRADES' } }));
     const { result } = renderHook(() => useMyGrades(ID), {
       wrapper: createQueryWrapper().wrapper,
     });

@@ -6,7 +6,7 @@
 
 ```ts
 type Role = 'PROFESSOR' | 'ALUNO';
-type GradeStatus = 'SEM_NOTAS' | 'APROVADO' | 'RECUPERACAO' | 'REPROVADO';
+type GradeStatus = 'NO_GRADES' | 'APPROVED' | 'RECOVERY' | 'FAILED';
 
 type User = { id: string; name: string; email: string; role: Role };
 type Session = { accessToken: string; user: User };
