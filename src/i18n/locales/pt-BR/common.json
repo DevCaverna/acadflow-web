@@ -31,6 +31,13 @@
     "text": "O endereço que você tentou abrir não existe ou foi movido.",
     "back": "Voltar ao início"
   },
+  "routeError": {
+    "label": "Erro inesperado",
+    "title": "Algo deu errado nesta página",
+    "text": "Não foi possível exibir esta tela agora. Você pode recarregar ou voltar ao início.",
+    "reload": "Recarregar página",
+    "back": "Voltar ao início"
+  },
   "optional": "(opcional)",
   "areas": {
     "PROFESSOR": "Área do professor",

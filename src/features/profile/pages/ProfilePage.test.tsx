@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { cleanup, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import i18n from '@/i18n';
@@ -28,6 +28,7 @@ describe('ProfilePage', () => {
   });
 
   afterEach(() => {
+    cleanup();
     accessToken.clear();
     toastStore.clear();
   });

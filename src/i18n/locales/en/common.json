@@ -31,6 +31,13 @@
     "text": "The address you tried to open does not exist or was moved.",
     "back": "Back to start"
   },
+  "routeError": {
+    "label": "Unexpected error",
+    "title": "Something went wrong on this page",
+    "text": "Could not display this screen right now. You can reload or go back to start.",
+    "reload": "Reload page",
+    "back": "Back to start"
+  },
   "optional": "(optional)",
   "areas": {
     "PROFESSOR": "Professor area",

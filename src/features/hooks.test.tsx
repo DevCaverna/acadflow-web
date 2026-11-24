@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { activityKeys } from '@/features/activities/api/activities.keys';
 import { useCreateActivity } from '@/features/activities/hooks/useActivities';
@@ -8,6 +8,7 @@ import { useLogout } from '@/features/auth/hooks/useLogout';
 import { disciplineKeys } from '@/features/disciplines/api/disciplines.keys';
 import { useCreateDiscipline } from '@/features/disciplines/hooks/useDisciplines';
 import { gradeKeys } from '@/features/grades/api/grades.keys';
+import { gradesService } from '@/features/grades/api/grades.service';
 import { useMyGrades, useSaveGrades } from '@/features/grades/hooks/useGrades';
 import i18n from '@/i18n';
 import { accessToken } from '@/shared/api/access-token';
@@ -23,7 +24,11 @@ describe('feature hooks', () => {
     await i18n.changeLanguage('en');
   });
 
-  afterEach(() => accessToken.clear());
+  afterEach(() => {
+    cleanup();
+    accessToken.clear();
+    toastStore.clear();
+  });
 
   it('stores the session on login and clears it on logout', async () => {
     const user = {
@@ -103,5 +108,12 @@ describe('feature hooks', () => {
     );
     expect(queryClient.getQueryState(gradeKeys.list(ID))?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(gradeKeys.mine(ID))?.isInvalidated).toBe(true);
+  });
+
+  it('calls DELETE /activities/:id/grades/:studentId when removing a grade', async () => {
+    const requests = mockApi(() => ({ status: 204, data: '' }));
+    await gradesService.remove({ activityId: ID, studentId: OTHER_ID });
+    expect(requests[0]?.method).toBe('delete');
+    expect(requests[0]?.url).toBe(`/activities/${ID}/grades/${OTHER_ID}`);
   });
 });

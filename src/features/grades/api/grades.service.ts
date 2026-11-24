@@ -38,6 +38,13 @@ export class GradesService {
       body: { value },
     });
   }
+
+  remove({
+    activityId,
+    studentId,
+  }: Pick<SaveGradeInput, 'activityId' | 'studentId'>): Promise<void> {
+    return this.api.delete({ url: `/activities/${activityId}/grades/${studentId}` });
+  }
 }
 
 export const gradesService = new GradesService(apiService);

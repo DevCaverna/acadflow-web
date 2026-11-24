@@ -6,6 +6,7 @@ import { disciplinesService } from '@/features/disciplines/api/disciplines.servi
 import { gradeKeys } from '@/features/grades/api/grades.keys';
 import { gradesService } from '@/features/grades/api/grades.service';
 import { createNotices, sortNotices } from '@/features/notifications/lib/notices';
+import { TIME } from '@/shared/config/time.constants';
 
 const OPTIONS = { perPage: 100 };
 
@@ -13,14 +14,14 @@ export function useNotices({ isStudent, now }: { isStudent: boolean; now: number
   const disciplines = useQuery({
     queryKey: disciplineKeys.list(OPTIONS),
     queryFn: () => disciplinesService.list(OPTIONS),
-    refetchOnMount: 'always',
+    staleTime: TIME.QUERY_STALE_MS,
   });
   const list = disciplines.data?.data ?? [];
   const activities = useQueries({
     queries: list.map(({ id }) => ({
       queryKey: activityKeys.list(id),
       queryFn: () => activitiesService.list({ disciplineId: id }),
-      refetchOnMount: 'always' as const,
+      staleTime: TIME.QUERY_STALE_MS,
     })),
   });
   const grades = useQueries({
@@ -28,7 +29,7 @@ export function useNotices({ isStudent, now }: { isStudent: boolean; now: number
       ? list.map(({ id }) => ({
           queryKey: gradeKeys.mine(id),
           queryFn: () => gradesService.mine({ disciplineId: id }),
-          refetchOnMount: 'always' as const,
+          staleTime: TIME.QUERY_STALE_MS,
         }))
       : [],
   });

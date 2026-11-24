@@ -1,23 +1,48 @@
+import { lazy, type ReactNode, Suspense } from 'react';
 import { Navigate, type RouteObject } from 'react-router';
 import { NotFoundPage } from '@/app/router/NotFoundPage';
 import { RequireAuth } from '@/app/router/RequireAuth';
+import { RouteErrorBoundary } from '@/app/router/RouteErrorBoundary';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
-import { DisciplinePage } from '@/features/disciplines/pages/DisciplinePage';
-import { DisciplinesPage } from '@/features/disciplines/pages/DisciplinesPage';
-import { GradesPage } from '@/features/grades/pages/GradesPage';
-import { ProfilePage } from '@/features/profile/pages/ProfilePage';
+import { Skeleton } from '@/shared/components/Skeleton';
+
+const DisciplinesPage = lazy(() =>
+  import('@/features/disciplines/pages/DisciplinesPage').then((m) => ({
+    default: m.DisciplinesPage,
+  })),
+);
+const DisciplinePage = lazy(() =>
+  import('@/features/disciplines/pages/DisciplinePage').then((m) => ({
+    default: m.DisciplinePage,
+  })),
+);
+const GradesPage = lazy(() =>
+  import('@/features/grades/pages/GradesPage').then((m) => ({ default: m.GradesPage })),
+);
+const ProfilePage = lazy(() =>
+  import('@/features/profile/pages/ProfilePage').then((m) => ({ default: m.ProfilePage })),
+);
+
+function withSuspense(node: ReactNode) {
+  return <Suspense fallback={<Skeleton />}>{node}</Suspense>;
+}
 
 export const routes: RouteObject[] = [
-  { path: '/login', element: <LoginPage /> },
   {
-    element: <RequireAuth />,
+    errorElement: <RouteErrorBoundary />,
     children: [
-      { path: '/', element: <Navigate to="/disciplines" replace /> },
-      { path: '/disciplines', element: <DisciplinesPage /> },
-      { path: '/disciplines/:disciplineId', element: <DisciplinePage /> },
-      { path: '/grades', element: <GradesPage /> },
-      { path: '/profile', element: <ProfilePage /> },
+      { path: '/login', element: <LoginPage /> },
+      {
+        element: <RequireAuth />,
+        children: [
+          { path: '/', element: <Navigate to="/disciplines" replace /> },
+          { path: '/disciplines', element: withSuspense(<DisciplinesPage />) },
+          { path: '/disciplines/:disciplineId', element: withSuspense(<DisciplinePage />) },
+          { path: '/grades', element: withSuspense(<GradesPage />) },
+          { path: '/profile', element: withSuspense(<ProfilePage />) },
+        ],
+      },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
-  { path: '*', element: <NotFoundPage /> },
 ];
