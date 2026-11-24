@@ -1,0 +1,27 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { gradeKeys } from '@/features/grades/api/grades.keys';
+import { gradesService } from '@/features/grades/api/grades.service';
+import type { SaveGradeInput } from '@/features/grades/schemas/grade.schema';
+
+export function useGrades(disciplineId: string) {
+  return useQuery({
+    queryKey: gradeKeys.list(disciplineId),
+    queryFn: () => gradesService.list(disciplineId),
+  });
+}
+
+export function useMyGrades(disciplineId: string) {
+  return useQuery({
+    queryKey: gradeKeys.mine(disciplineId),
+    queryFn: () => gradesService.mine(disciplineId),
+  });
+}
+
+export function useSaveGrade(disciplineId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: SaveGradeInput) => gradesService.save(input),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: gradeKeys.discipline(disciplineId) }),
+  });
+}
