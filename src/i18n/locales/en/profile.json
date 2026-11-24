@@ -1,0 +1,17 @@
+{
+  "title": "My profile",
+  "personalData": "Personal data",
+  "name": "Name",
+  "role": "Access profile",
+  "roleHint": "{{role}} · the profile cannot be changed here.",
+  "save": "Save data",
+  "saved": "Data saved",
+  "changePassword": "Change password",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "confirmation": "Confirm new password",
+  "passwordPlaceholder": "Min. 8 characters",
+  "passwordTooShort": "Use at least 8 characters.",
+  "passwordMismatch": "The passwords do not match.",
+  "passwordChanged": "Password changed"
+}

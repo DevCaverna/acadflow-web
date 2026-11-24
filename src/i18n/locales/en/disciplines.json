@@ -23,6 +23,6 @@
   "removeTitle": "Delete course?",
   "count_one": "{{count}} course",
   "count_other": "{{count}} courses",
-  "enrollmentHint": "Enrollments are registered by the institution. Average: only saved grades.",
+  "enrollmentHint": "Average: only saved grades.",
   "descriptionPlaceholder": "Short syllabus"
 }

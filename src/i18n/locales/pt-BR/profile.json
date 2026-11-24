@@ -1,0 +1,17 @@
+{
+  "title": "Meu perfil",
+  "personalData": "Dados pessoais",
+  "name": "Nome",
+  "role": "Perfil de acesso",
+  "roleHint": "{{role}} · o perfil não pode ser alterado por aqui.",
+  "save": "Salvar dados",
+  "saved": "Dados salvos",
+  "changePassword": "Alterar senha",
+  "currentPassword": "Senha atual",
+  "newPassword": "Nova senha",
+  "confirmation": "Confirmar nova senha",
+  "passwordPlaceholder": "Mín. 8 caracteres",
+  "passwordTooShort": "Use pelo menos 8 caracteres.",
+  "passwordMismatch": "As senhas não são iguais.",
+  "passwordChanged": "Senha alterada"
+}

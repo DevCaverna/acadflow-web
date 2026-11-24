@@ -23,6 +23,6 @@
   "removeTitle": "Excluir disciplina?",
   "count_one": "{{count}} disciplina",
   "count_other": "{{count}} disciplinas",
-  "enrollmentHint": "Matrículas são cadastradas pela instituição. Média: só notas lançadas.",
+  "enrollmentHint": "Média: só notas lançadas.",
   "descriptionPlaceholder": "Ementa resumida"
 }

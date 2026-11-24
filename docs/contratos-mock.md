@@ -63,4 +63,12 @@ Aplicada em `GET /disciplines`. Query: `page` (padrão 1), `perPage` (padrão 20
 
 IDs são UUID v7. Erros seguem `ApiError`; em `VALIDATION_ERROR`, `message` reúne as mensagens dos campos com `; `.
 
+### Perfil
+
+`GET` e `PATCH /users/me` (`{ name?, email? }`, `200 User`) e `PATCH /users/me/password` (`{ currentPassword, newPassword }`, `204`). Senha atual errada retorna `400 INVALID_CURRENT_PASSWORD`.
+
+### Matrículas
+
+`GET /disciplines/:id/students/candidates?search=` (mínimo 3 letras), `POST` e `DELETE /disciplines/:id/students/:studentId`. Matrícula repetida ou aluno com notas retorna `409`.
+
 Os mocks reproduzem esses formatos, sem tratar regras de permissão como segurança real.

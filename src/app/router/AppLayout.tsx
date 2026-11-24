@@ -17,7 +17,7 @@ type AppLayoutProps = {
 
 /** Estrutura das páginas autenticadas, com menu por papel. */
 export function AppLayout({ user }: AppLayoutProps) {
-  const { t } = useTranslation(['common', 'disciplines', 'grades']);
+  const { t } = useTranslation(['common', 'disciplines', 'grades', 'profile']);
   const logout = useLogout();
   const items: Array<{ to: string; icon: IconName; label: string }> = [
     { to: '/disciplines', icon: 'disciplines', label: t('disciplines:title') },
@@ -26,6 +26,7 @@ export function AppLayout({ user }: AppLayoutProps) {
       icon: 'grades',
       label: user.role === 'PROFESSOR' ? t('grades:entryTitle') : t('grades:mineTitle'),
     },
+    { to: '/profile', icon: 'profile', label: t('profile:title') },
   ];
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -34,7 +35,7 @@ export function AppLayout({ user }: AppLayoutProps) {
           <img src="/icons/icon-simple.svg" alt="" width={36} height={36} />
           <span className="font-display text-xl font-bold tracking-tight">{t('appName')}</span>
         </div>
-        <nav aria-label={t('menu')} className="flex flex-1 gap-1 md:flex-col">
+        <nav aria-label={t('menu')} className="flex flex-1 flex-wrap gap-1 md:flex-col">
           <span className="px-3 pb-2 text-[11px] font-semibold tracking-[0.08em] text-muted uppercase max-md:hidden">
             {t(`areas.${user.role}`)}
           </span>
