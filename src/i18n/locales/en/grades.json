@@ -1,0 +1,10 @@
+{
+  "title": "Grades",
+  "average": "Average",
+  "status": {
+    "APROVADO": "Approved",
+    "RECUPERACAO": "Recovery",
+    "REPROVADO": "Failed",
+    "SEM_NOTAS": "No grades"
+  }
+}
