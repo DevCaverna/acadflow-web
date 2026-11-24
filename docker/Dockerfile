@@ -6,7 +6,6 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 ARG VITE_API_BASE_URL=http://localhost:3000
 ARG VITE_APP_NAME=AcadFlow
-ARG VITE_DEFAULT_LOCALE=pt-BR
 RUN pnpm build
 
 FROM nginx:1.28-alpine

@@ -1,11 +1,17 @@
 {
   "appName": "AcadFlow",
-  "signIn": "Entrar",
-  "email": "E-mail",
-  "password": "Senha",
-  "approved": "Aprovado",
-  "recovery": "Recuperação",
-  "failed": "Reprovado",
-  "noGrades": "Sem notas",
-  "tagline": "Organize disciplinas, atividades e notas."
+  "tagline": "Organize disciplinas, atividades e notas.",
+  "language": "Idioma",
+  "languages": {
+    "pt-BR": "Português",
+    "en": "English"
+  },
+  "loading": "Carregando…",
+  "retry": "Tentar novamente",
+  "pagination": {
+    "label": "Paginação",
+    "previous": "Anterior",
+    "next": "Próxima",
+    "current": "Página {{page}} de {{pages}}"
+  }
 }

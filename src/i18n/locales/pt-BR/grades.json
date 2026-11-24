@@ -1,0 +1,10 @@
+{
+  "title": "Notas",
+  "average": "Média",
+  "status": {
+    "APROVADO": "Aprovado",
+    "RECUPERACAO": "Recuperação",
+    "REPROVADO": "Reprovado",
+    "SEM_NOTAS": "Sem notas"
+  }
+}
