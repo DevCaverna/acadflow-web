@@ -8,3 +8,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+interface Window {
+  __ACADFLOW_API_BASE_URL__?: string;
+}

@@ -35,6 +35,8 @@ jobs:
       - run: pnpm typecheck
       - name: Unit and component tests
         run: pnpm test
+      - name: Release and deployment policy tests (mocked)
+        run: bash .github/scripts/delivery.test.sh
 
   build:
     name: Web / Build
