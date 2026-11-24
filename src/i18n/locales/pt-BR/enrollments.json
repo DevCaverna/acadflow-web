@@ -1,0 +1,13 @@
+{
+  "add": "Adicionar aluno",
+  "search": "Buscar aluno por nome ou e-mail",
+  "searchHint": "Digite pelo menos 3 letras.",
+  "candidates": "Alunos encontrados",
+  "noCandidates": "Nenhum aluno disponível para matricular.",
+  "enroll": "Matricular",
+  "enrolled": "Aluno matriculado",
+  "remove": "Remover matrícula",
+  "removeTitle": "Remover matrícula?",
+  "removeConfirm": "{{name}} perde o acesso à disciplina. Só é possível sem notas lançadas.",
+  "removed": "Matrícula removida"
+}

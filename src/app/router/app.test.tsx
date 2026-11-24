@@ -240,6 +240,44 @@ describe('app', () => {
     });
   });
 
+  describe('enrollments', () => {
+    beforeEach(() => accessToken.set('token'));
+
+    const studentsPath = `/disciplines/${id(3)}/students`;
+
+    it('searches and enrolls a student', async () => {
+      const requests = setup(professor, {
+        [`get ${studentsPath}/candidates`]: {
+          data: [{ id: id(8), name: 'Bruno', email: 'b@example.com' }],
+        },
+        [`post ${studentsPath}/${id(8)}`]: {
+          status: 201,
+          data: { id: id(8), name: 'Bruno', email: 'b@example.com' },
+        },
+      });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Adicionar aluno' }));
+      const search = screen.getByLabelText('Buscar aluno por nome ou e-mail');
+      await userEvent.type(search, 'br');
+      expect(screen.getByText('Digite pelo menos 3 letras.')).toBeInTheDocument();
+      expect(requests.some(({ url }) => url?.endsWith('/candidates'))).toBe(false);
+      await userEvent.type(search, 'u');
+      await userEvent.click(await screen.findByRole('button', { name: 'Matricular: Bruno' }));
+      expect(await screen.findByText('Aluno matriculado')).toBeInTheDocument();
+    });
+
+    it('explains why a student with grades cannot be removed', async () => {
+      setup(professor, {
+        [`delete ${studentsPath}/${id(2)}`]: error(409, 'CONFLICT', 'Há notas lançadas'),
+      });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Remover matrícula: Ana' }));
+      const dialog = screen.getByRole('dialog');
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
+      expect(await screen.findByText('Há notas lançadas')).toBeInTheDocument();
+    });
+  });
+
   describe('activities', () => {
     beforeEach(() => accessToken.set('token'));
 

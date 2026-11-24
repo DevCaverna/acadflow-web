@@ -1,0 +1,13 @@
+{
+  "add": "Add student",
+  "search": "Search student by name or email",
+  "searchHint": "Type at least 3 letters.",
+  "candidates": "Students found",
+  "noCandidates": "No students available to enroll.",
+  "enroll": "Enroll",
+  "enrolled": "Student enrolled",
+  "remove": "Remove enrollment",
+  "removeTitle": "Remove enrollment?",
+  "removeConfirm": "{{name}} loses access to the course. Only possible without saved grades.",
+  "removed": "Enrollment removed"
+}
