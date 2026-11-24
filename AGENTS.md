@@ -109,12 +109,13 @@ pnpm build
 pnpm pr
 ```
 
-- CI em PR/push para `develop`, `staging` e `main` com Node 24/pnpm 12.4.2; validação antes do build, artefatos somente após sucesso. Não confundir artefato com deploy.
+- CI em PRs para `main` e pushes em `main` com Node 24/pnpm 12.4.2; validação antes do build, artefatos somente após sucesso. Não confundir artefato com deploy.
 
 ## 9. Git, Linear e Pull Requests
 
 - Abrir issue `ACA-*`, descrever plano e desenvolver somente dentro do escopo aprovado.
-- Branch: `feature/ACA-<numero>-slug` a partir de `develop`. Promoção `develop` → `staging` → `main`, com reviews.
+- `main` é a única branch permanente. Criar branch `feature/ACA-<numero>-slug` a partir de `main` e abrir PR para `main`, com revisão e CI.
+- Promover o mesmo digest entre os GitHub Environments `development`, `staging` e `production`; produção usa uma release `vX.Y.Z` homologada em `staging`.
 - Conventional Commits em inglês, com mensagem curta no formato `<prefixo>: <descrição>`:
 
   | Prefixo     | Quando usar                |

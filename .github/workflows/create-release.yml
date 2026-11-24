@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       candidate:
-        description: 'Override the matching staging candidate (COMMIT@sha256:DIGEST)'
+        description: 'Override the latest successful staging candidate (COMMIT@sha256:DIGEST)'
         required: false
         type: string
 
@@ -42,4 +42,4 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          bash .github/scripts/delivery.sh release "$VERSION" "$CANDIDATE" "$GITHUB_SHA"
+          bash .github/scripts/delivery.sh release "$VERSION" "$CANDIDATE"

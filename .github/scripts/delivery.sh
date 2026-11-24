@@ -21,7 +21,6 @@ validate_version() {
 }
 
 commit_tree() { gh api "$repo/git/commits/$1" --jq '.tree.sha'; }
-branch_tip() { gh api "$repo/git/ref/heads/$1" --jq '.object.sha'; }
 
 verify_candidate() {
   tree=$(commit_tree "$revision")
@@ -40,8 +39,9 @@ require_branch_ci() {
 }
 
 require_main_commit() {
+  [[ $1 =~ ^$sha_pattern$ ]] || fail 'Expected a full commit SHA.'
   gh api "$repo/compare/$1...main" --jq '.status' | grep -Ex 'ahead|identical' > /dev/null ||
-    fail 'Release commit is not in main.'
+    fail 'Commit is not in main.'
   require_branch_ci main "$1"
 }
 
@@ -68,13 +68,14 @@ require_previous_deploy() {
   fail "No successful $target deployment for $revision@$digest."
 }
 
-# A merge can change the SHA without changing its tree.
-find_promoted_candidate() {
-  local target=$1 wanted_tree=$2 records id sha recorded_digest
-  records=$(deployment_records "$target") || return 1
+find_deployed_candidate() {
+  local target=$1 wanted_revision=${2:-} records id sha recorded_digest
+  local -a filters=()
+  if [[ -n $wanted_revision ]]; then filters=(-f "sha=$wanted_revision"); fi
+  records=$(deployment_records "$target" "${filters[@]}") || return 1
   while IFS=$'\t' read -r id sha recorded_digest; do
     [[ $id =~ ^[0-9]+$ && $sha =~ ^$sha_pattern$ && $recorded_digest =~ ^$digest_pattern$ ]] || continue
-    [[ $(commit_tree "$sha") == "$wanted_tree" ]] || continue
+    [[ -z $wanted_revision || $sha == "$wanted_revision" ]] || continue
     if deployment_succeeded "$id"; then
       printf '%s@%s\n' "$sha" "$recorded_digest"
       return 0
@@ -104,38 +105,44 @@ require_tag() {
 }
 
 create_release() {
-  local version=$1 candidate=$2 main_commit=$3 metadata existing notes id main_tree
+  local version=$1 candidate=$2 commit= object metadata existing notes id saved_candidate
   validate_version "$version"
-  [[ $main_commit =~ ^$sha_pattern$ ]] || fail 'Invalid main commit.'
-  require_main_commit "$main_commit"
-  main_tree=$(commit_tree "$main_commit")
   existing=$(gh api --paginate "$repo/releases?per_page=100" |
     jq -c --arg version "$version" '.[] | select(.tag_name == $version)')
-  if [[ -z $candidate ]]; then
-    if [[ -n $existing ]]; then
-      candidate=$(release_metadata <<< "$existing" | jq -er '.candidate')
-    else
-      candidate=$(find_promoted_candidate staging "$main_tree")
-      [[ -n $candidate ]] || fail 'No successful staging deployment matches main HEAD. Deploy a matching snapshot first.'
-    fi
+  object=$(tag_object "$version")
+  if [[ -n $object ]]; then
+    commit=$(jq -er 'select(.type == "commit") | .sha' <<< "$object") ||
+      fail "Tag $version does not point directly to a commit."
+    [[ $commit =~ ^$sha_pattern$ ]] || fail 'Invalid tag commit.'
   fi
-  parse_candidate "$candidate"
-  verify_candidate
-  [[ $main_tree == "$tree" ]] || fail 'Candidate tree differs from main.'
-  require_previous_deploy staging
-  metadata=$(jq -cn --arg candidate "$revision@$digest" --arg commit "$main_commit" \
-    '{candidate: $candidate, commit: $commit}')
   if [[ -n $existing ]]; then
     jq -e '.prerelease == false' <<< "$existing" > /dev/null ||
       fail "Release $version already exists as a prerelease."
-    [[ $(release_metadata <<< "$existing") == "$metadata" ]] ||
-      fail "Release $version already has different metadata."
+    metadata=$(release_metadata <<< "$existing")
+    saved_candidate=$(jq -er '.candidate' <<< "$metadata")
+    [[ -z $candidate || $candidate == "$saved_candidate" ]] ||
+      fail "Release $version already has a different candidate."
+    candidate=$saved_candidate
+    commit=$(jq -er '.commit' <<< "$metadata")
+    require_tag "$version" "$commit"
     id=$(jq -er '.id' <<< "$existing")
   fi
-  if [[ -z $(tag_object "$version") ]]; then
-    gh api --method POST "$repo/git/refs" -f ref="refs/tags/$version" -f sha="$main_commit" > /dev/null
+  if [[ -z $candidate ]]; then
+    candidate=$(find_deployed_candidate staging "$commit")
+    [[ -n $candidate ]] || fail 'No successful staging deployment found. Deploy a snapshot to staging first.'
   fi
-  require_tag "$version" "$main_commit"
+  parse_candidate "$candidate"
+  if [[ -z $commit ]]; then commit=$revision; fi
+  require_main_commit "$commit"
+  verify_candidate
+  [[ $(commit_tree "$commit") == "$tree" ]] || fail 'Candidate tree differs from the release commit.'
+  require_previous_deploy staging
+  metadata=$(jq -cn --arg candidate "$revision@$digest" --arg commit "$commit" \
+    '{candidate: $candidate, commit: $commit}')
+  if [[ -z $object ]]; then
+    gh api --method POST "$repo/git/refs" -f ref="refs/tags/$version" -f sha="$commit" > /dev/null
+  fi
+  require_tag "$version" "$commit"
   if [[ -z $existing ]]; then
     # shellcheck disable=SC2016
     printf -v notes 'Image: `%s@%s`\n\nCandidate: `%s`\n\n<!-- acadflow-image: %s -->' \
@@ -150,19 +157,11 @@ create_release() {
 }
 
 resolve_snapshot() {
-  local target=$1 branch=$2 commit=$3 tip wanted_tree candidate
+  local target=$1 commit=$2 candidate
   case "$target" in development | staging) ;; *) fail 'Unknown snapshot environment.' ;; esac
-  case "$branch" in develop | staging) ;; *) fail 'Select develop or staging.' ;; esac
-  tip=$(branch_tip "$branch")
-  commit=${commit:-$tip}
-  [[ $commit =~ ^$sha_pattern$ && $tip =~ ^$sha_pattern$ ]] || fail 'Expected a full commit SHA.'
-  if [[ $commit != "$tip" ]]; then
-    gh api "$repo/compare/$commit...$tip" --jq '.status' | grep -Ex 'ahead|identical' > /dev/null ||
-      fail "Commit is not in $branch."
-  fi
-  require_branch_ci "$branch" "$commit"
-  wanted_tree=$(commit_tree "$commit")
-  candidate=$(find_promoted_candidate development "$wanted_tree")
+  commit=${commit:-${GITHUB_SHA:?}}
+  require_main_commit "$commit"
+  candidate=$(find_deployed_candidate development "$commit")
   if [[ -z $candidate ]]; then
     [[ $target == development ]] || fail 'No successful development deployment matches this commit. Deploy to development first.'
     revision=$commit
@@ -170,25 +169,23 @@ resolve_snapshot() {
   else
     parse_candidate "$candidate"
     verify_candidate
-    [[ $tree == "$wanted_tree" ]] || fail 'Candidate tree differs from the selected commit.'
   fi
   printf 'revision=%s\ndigest=%s\n' "$revision" "$digest" >> "${GITHUB_OUTPUT:?}"
-  printf 'Source: %s at %s\n' "$branch" "$commit" >> "${GITHUB_STEP_SUMMARY:?}"
+  printf 'Source: main at %s\n' "$commit" >> "${GITHUB_STEP_SUMMARY:?}"
 }
 
 resolve_deploy() {
-  local target=$1 version=$2 release metadata commit staging_commit
+  local target=$1 version=$2 release metadata commit
   case $target in
     development)
       parse_candidate "$version"
+      require_main_commit "$revision"
       verify_candidate
       ;;
     staging)
       parse_candidate "$version"
+      require_main_commit "$revision"
       verify_candidate
-      staging_commit=$(branch_tip staging)
-      require_branch_ci staging "$staging_commit"
-      [[ $(commit_tree "$staging_commit") == "$tree" ]] || fail 'Candidate tree differs from staging.'
       require_previous_deploy development
       ;;
     production)
@@ -219,8 +216,8 @@ resolve_deploy() {
 }
 
 case ${1:-} in
-  release) [[ $# == 4 ]] || fail 'Expected version, candidate and main commit.'; create_release "$2" "$3" "$4" ;;
+  release) [[ $# == 3 ]] || fail 'Expected version and optional candidate.'; create_release "$2" "$3" ;;
   resolve) [[ $# == 3 ]] || fail 'Expected environment and version/candidate.'; resolve_deploy "$2" "$3" ;;
-  snapshot) [[ $# == 4 ]] || fail 'Expected environment, branch and optional commit.'; resolve_snapshot "$2" "$3" "$4" ;;
+  snapshot) [[ $# == 3 ]] || fail 'Expected environment and optional commit.'; resolve_snapshot "$2" "$3" ;;
   *) fail 'Unknown operation.' ;;
 esac
