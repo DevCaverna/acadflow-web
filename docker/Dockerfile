@@ -1,4 +1,4 @@
-FROM node:24-trixie-slim AS build
+FROM node:25-trixie-slim AS build
 RUN npm install --global pnpm@12.4.2
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
