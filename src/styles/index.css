@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+
+@theme {
+  --color-primary: #2e43c8;
+  --color-primary-hover: #2436a8;
+  --color-primary-active: #1c2a8c;
+  --color-accent: #f2a93b;
+  --color-surface: #ffffff;
+  --color-inverse: #151826;
+  --color-link: #2e43c8;
+  --color-link-strong: #2436a8;
+  --color-danger-fill: #c0322a;
+  --color-ink: #151826;
+  --color-muted: #5a6072;
+  --color-line: #e4e6ee;
+  --color-canvas: #f5f6fa;
+  --color-success: #1c7a4a;
+  --color-danger: #c0322a;
+  --color-danger-hover: #a02720;
+  --color-danger-soft: #fce9e7;
+  --color-success-soft: #e6f4ec;
+  --color-warning-soft: #fdf3e1;
+  --color-primary-soft: #eef0fc;
+  --color-primary-muted: #dde2fa;
+  --color-danger-ink: #8f241e;
+  --color-warning-ink: #5c3800;
+  --color-subtle: #f0f1f5;
+  --color-skeleton: #e9ebf2;
+  --color-field: #c9cdda;
+  --radius-panel: 16px;
+  --color-warning: #8a5300;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', system-ui, sans-serif;
+  --radius-field: 6px;
+  --radius-button: 10px;
+  --radius-card: 14px;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-primary: #4a5fe0;
+    --color-primary-hover: #3d50cc;
+    --color-primary-active: #3244b8;
+    --color-surface: #1a1f2e;
+    --color-inverse: #2d3447;
+    --color-link: #a9b6ff;
+    --color-link-strong: #c3ccff;
+    --color-ink: #eceef6;
+    --color-muted: #a3a9bd;
+    --color-line: #2d3447;
+    --color-canvas: #10131c;
+    --color-success: #5fd39a;
+    --color-danger: #ff8f87;
+    --color-danger-soft: #43201f;
+    --color-danger-ink: #ffb4ae;
+    --color-success-soft: #163528;
+    --color-warning: #f5c36b;
+    --color-warning-soft: #40300f;
+    --color-warning-ink: #f9dca6;
+    --color-primary-soft: #232b55;
+    --color-primary-muted: #2f3970;
+    --color-subtle: #242a3b;
+    --color-skeleton: #2a3144;
+    --color-field: #454d66;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+    }
+  }
+}
+
+body {
+  @apply bg-canvas font-sans text-ink;
+}

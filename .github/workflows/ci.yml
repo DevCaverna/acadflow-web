@@ -1,0 +1,64 @@
+name: AcadFlow Web CI
+
+on:
+  pull_request:
+    branches: [develop, staging, main]
+  push:
+    branches: [develop, staging, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: acadflow-web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Web / Validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.4.2
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - name: Unit and component tests
+        run: pnpm test
+      - name: Release and deployment policy tests (mocked)
+        run: bash .github/scripts/delivery.test.sh
+
+  build:
+    name: Web / Build
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.4.2
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Upload Web build (not deployment)
+        uses: actions/upload-artifact@v4
+        with:
+          name: acadflow-web-dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

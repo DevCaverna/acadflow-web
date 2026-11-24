@@ -1,0 +1,45 @@
+{
+  "appName": "AcadFlow",
+  "tagline": "Organize courses, activities and grades.",
+  "language": "Language",
+  "languages": {
+    "pt-BR": "Português",
+    "en": "English"
+  },
+  "loading": "Loading…",
+  "retry": "Try again",
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "current": "Page {{page}} of {{pages}}"
+  },
+  "cancel": "Cancel",
+  "save": "Save",
+  "edit": "Edit",
+  "remove": "Delete",
+  "close": "Close",
+  "menu": "Main menu",
+  "signOut": "Sign out",
+  "roles": {
+    "PROFESSOR": "Professor",
+    "ALUNO": "Student"
+  },
+  "notFound": {
+    "label": "Error 404",
+    "title": "Page not found",
+    "text": "The address you tried to open does not exist or was moved.",
+    "back": "Back to start"
+  },
+  "optional": "(optional)",
+  "areas": {
+    "PROFESSOR": "Professor area",
+    "ALUNO": "Student area"
+  },
+  "breadcrumb": "Breadcrumb",
+  "closeNotice": "Close notice",
+  "theme": {
+    "dark": "Use dark theme",
+    "light": "Use light theme"
+  }
+}

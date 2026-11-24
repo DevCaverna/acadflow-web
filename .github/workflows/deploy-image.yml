@@ -1,0 +1,109 @@
+name: Deploy Image
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      revision:
+        required: true
+        type: string
+      digest:
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      deployments: write
+      packages: read
+    env:
+      TARGET: ${{ inputs.environment }}
+      VERSION: ${{ inputs.version }}
+      REVISION: ${{ inputs.revision }}
+      DIGEST: ${{ inputs.digest }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Record the image deployment
+        id: record
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          id=$(jq -cn --arg ref "$REVISION" --arg target "$TARGET" --arg digest "$DIGEST" \
+            --arg version "$VERSION" \
+            '{ref: $ref, environment: $target, task: "acadflow-web-image", auto_merge: false,
+              required_contexts: [], payload: {digest: $digest, version: $version}}' |
+            gh api "repos/$GITHUB_REPOSITORY/deployments" --input - --jq '.id')
+          [[ $id =~ ^[0-9]+$ ]]
+          printf 'id=%s\n' "$id" >> "$GITHUB_OUTPUT"
+      - name: Deploy the repository script over SSH
+        id: ssh
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+          DEPLOY_SSH_USER: ${{ vars.DEPLOY_SSH_USER || 'admin' }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          GHCR_USERNAME: ${{ github.actor }}
+          GHCR_TOKEN: ${{ github.token }}
+          WEB_HOST_PORT: ${{ vars.WEB_HOST_PORT }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: |
+          set -euo pipefail
+          [[ $DEPLOY_HOST =~ ^[[:alnum:]][[:alnum:].-]*$ ]]
+          [[ $DEPLOY_PORT =~ ^[0-9]{1,5}$ ]] && ((10#$DEPLOY_PORT >= 1 && 10#$DEPLOY_PORT <= 65535))
+          [[ $DEPLOY_SSH_USER =~ ^[a-zA-Z_][a-zA-Z0-9_.-]*$ ]] ||
+            { printf 'Invalid GitHub Environment setting: DEPLOY_SSH_USER\n' >&2; exit 1; }
+          [[ $DIGEST =~ ^sha256:[0-9a-f]{64}$ ]]
+          case "$TARGET" in development | staging | production) ;; *) exit 1 ;; esac
+          keys=(WEB_HOST_PORT VITE_API_BASE_URL)
+          for key in DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS "${keys[@]}"; do
+            [[ -n ${!key} ]] || { printf 'Missing GitHub Environment setting: %s\n' "$key" >&2; exit 1; }
+          done
+          [[ -n $GHCR_USERNAME && -n $GHCR_TOKEN ]]
+          umask 077
+          ssh_dir=$(mktemp -d)
+          trap 'rm -f "$ssh_dir/key" "$ssh_dir/known_hosts"; rmdir "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ssh_dir/key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
+          script=$(< scripts/deploy-web.sh)
+          # Quote for the remote login shell. Runtime values travel separately over stdin.
+          printf -v remote_command "sudo -n -- bash -c '%s' -- '%s' '%s'" "${script//\'/\'\\\'\'}" "$TARGET" "$DIGEST"
+          {
+            for key in "${keys[@]}"; do printf '%s=%s\0' "$key" "${!key}"; done
+            printf '%s\0' "$GHCR_USERNAME" "$GHCR_TOKEN"
+          } | ssh -T -F /dev/null -i "$ssh_dir/key" -p "$DEPLOY_PORT" \
+              -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=15 -o ClearAllForwardings=yes \
+              -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$ssh_dir/known_hosts" \
+              -o GlobalKnownHostsFile=/dev/null -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+              "$DEPLOY_SSH_USER@$DEPLOY_HOST" "$remote_command"
+      - name: Record the deployment result
+        if: ${{ always() && steps.record.outputs.id != '' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOYMENT_ID: ${{ steps.record.outputs.id }}
+          SSH_OUTCOME: ${{ steps.ssh.outcome }}
+        run: |
+          set -euo pipefail
+          state=failure
+          if [[ $SSH_OUTCOME == success ]]; then state=success; fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/deployments/$DEPLOYMENT_ID/statuses" \
+            -f state="$state" -F auto_inactive=false \
+            -f log_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --silent
