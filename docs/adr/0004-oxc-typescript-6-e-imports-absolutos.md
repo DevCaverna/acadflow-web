@@ -22,4 +22,3 @@ Com o crescimento por features em `src/features/*`, imports relativos longos (`.
 
 - **Positivas:** movimentação de arquivos exige menos reescrita de caminhos, linter detecta problemas tipados rapidamente no `pnpm pr` e mantém padrão idêntico ao da API.
 - **Negativas:** qualquer novo arquivo ou teste criado com `./` ou `../` falha imediatamente no `pnpm lint`.
-

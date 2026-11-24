@@ -22,4 +22,3 @@ A maior parte do estado da aplicação web consiste em cache de recursos REST (d
 
 - **Positivas:** bundle mais enxuto, separação nítida entre server state e UI state, invalidação declarativa e testes mais simples com `QueryClient` isolado por teste.
 - **Negativas:** se no futuro surgirem fluxos complexos de estado client-side compartilhado (como rascunhos multi-etapa persistentes), uma store dedicada poderá ser reavaliada.
-

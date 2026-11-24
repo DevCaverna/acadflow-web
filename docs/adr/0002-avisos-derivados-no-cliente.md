@@ -20,4 +20,3 @@ Implementar os avisos inteiramente no cliente (`useNotices` + `buildNotices`), c
 
 - **Positivas:** zero custo adicional de schema/backend, dados sempre coerentes com prazos e notas atuais, implementação isolada em `src/features/notifications/`.
 - **Negativas:** o indicador de notas recentes depende de `updatedAt` nos itens de `GradeSummary` (introduzido em `ACA-25` na API; sem esse campo, apenas os prazos futuros são exibidos).
-

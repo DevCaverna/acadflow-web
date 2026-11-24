@@ -36,7 +36,7 @@ pnpm dev
 | ------------------------------------------------------------------------------------------ | ---------------------------------------------- |
 | [Linear](https://linear.app/acadflow/document/acadflow-inicio-e-documentacao-9f01545a3125) | Início e documentação do projeto               |
 | [Execução](docs/execucao/README.md)                                                        | Como rodar, testar e resolver problemas        |
-| [Deploy](docs/execucao/deploy.md)                                                          | Build de produção, Docker/Nginx e CORS         |
+| [Deploy](docs/execucao/deploy.md)                                                          | Releases e deploy (GHCR, Docker/Nginx e VPS)   |
 | [Manual do Usuário](docs/manual-do-usuario.md)                                             | Guia funcional para Professor e Aluno          |
 | [Arquitetura](docs/arquitetura.md)                                                         | Camadas, gestão de estado e fluxos Mermaid     |
 | [Design System](docs/design-system.md)                                                     | Tokens light/dark e catálogo de 17 componentes |

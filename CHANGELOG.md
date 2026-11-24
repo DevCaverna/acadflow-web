@@ -6,7 +6,7 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ### Adicionado
 
-- Documentação completa em `develop`: arquitetura real com fluxos Mermaid ([docs/arquitetura.md](docs/arquitetura.md)), catálogo do Design System e dos 17 componentes base ([docs/design-system.md](docs/design-system.md)), ADRs do frontend (`docs/adr/`), manual do usuário ([docs/manual-do-usuario.md](docs/manual-do-usuario.md)), matriz de rastreabilidade ([docs/rastreabilidade.md](docs/rastreabilidade.md)) e guia de deploy ([docs/execucao/deploy.md](docs/execucao/deploy.md)).
+- Documentação completa em `develop`: arquitetura real com fluxos Mermaid ([docs/arquitetura.md](docs/arquitetura.md)), catálogo do Design System e dos 17 componentes base ([docs/design-system.md](docs/design-system.md)), ADRs do frontend (`docs/adr/`), manual do usuário ([docs/manual-do-usuario.md](docs/manual-do-usuario.md)) e matriz de rastreabilidade ([docs/rastreabilidade.md](docs/rastreabilidade.md)).
 - Governança: `CHANGELOG.md`, `SECURITY.md` e `LICENSE` (MIT).
 
 ## [0.1.0] - 2026-11-24 _(em `develop`)_
