@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityFormModal } from '@/features/activities/components/ActivityFormModal';
+import { AttachmentsModal } from '@/features/activities/components/AttachmentsModal';
 import { DueBadge } from '@/features/activities/components/DueBadge';
 import { GradedProgress } from '@/features/activities/components/GradedProgress';
 import { useActivities, useRemoveActivity } from '@/features/activities/hooks/useActivities';
@@ -31,6 +32,7 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
   const remove = useRemoveActivity(discipline.id);
   const [form, setForm] = useState<{ activity?: Activity } | null>(null);
   const [removing, setRemoving] = useState<Activity | null>(null);
+  const [attaching, setAttaching] = useState<Activity | null>(null);
   const [now] = useState(() => Date.now());
 
   const createButton = canEdit && (
@@ -59,7 +61,7 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
               text={canEdit ? t('emptyHint') : t('empty')}
             />
           ) : (
-            <div className="overflow-x-auto rounded-card border border-line bg-white">
+            <div className="overflow-x-auto rounded-card border border-line bg-surface">
               <table className="w-full text-left text-sm">
                 <thead className="bg-canvas">
                   <tr>
@@ -73,15 +75,13 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
                       {t('deadline')}
                     </th>
                     {canEdit && (
-                      <>
-                        <th scope="col" className={HEADER_CLASS}>
-                          {t('graded')}
-                        </th>
-                        <th scope="col" className={HEADER_CLASS}>
-                          {t('actions')}
-                        </th>
-                      </>
+                      <th scope="col" className={HEADER_CLASS}>
+                        {t('graded')}
+                      </th>
                     )}
+                    <th scope="col" className={HEADER_CLASS}>
+                      {t('actions')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,12 +106,19 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
                         <DueBadge dueAt={activity.dueAt} now={now} />
                       </td>
                       {canEdit && (
-                        <>
-                          <td className="px-4 py-4">
-                            <GradedProgress disciplineId={discipline.id} activityId={activity.id} />
-                          </td>
-                          <td className="px-4 py-4">
-                            <div className="flex gap-1.5">
+                        <td className="px-4 py-4">
+                          <GradedProgress disciplineId={discipline.id} activityId={activity.id} />
+                        </td>
+                      )}
+                      <td className="px-4 py-4">
+                        <div className="flex gap-1.5">
+                          <IconButton
+                            icon="attachment"
+                            label={`${t('attachments.title')}: ${activity.title}`}
+                            onClick={() => setAttaching(activity)}
+                          />
+                          {canEdit && (
+                            <>
                               <IconButton
                                 icon="edit"
                                 label={`${t('common:edit')}: ${activity.title}`}
@@ -123,10 +130,10 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
                                 className="text-danger"
                                 onClick={() => setRemoving(activity)}
                               />
-                            </div>
-                          </td>
-                        </>
-                      )}
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -140,6 +147,13 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
           discipline={discipline}
           activity={form.activity}
           onClose={() => setForm(null)}
+        />
+      )}
+      {attaching && (
+        <AttachmentsModal
+          activity={attaching}
+          canEdit={canEdit}
+          onClose={() => setAttaching(null)}
         />
       )}
       {removing && (

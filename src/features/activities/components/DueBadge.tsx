@@ -3,7 +3,7 @@ import { getDueStatus } from '@/features/activities/lib/due-date';
 import { cn } from '@/shared/lib/cn';
 
 const STYLES = {
-  open: 'bg-primary-soft text-primary-hover',
+  open: 'bg-primary-soft text-link-strong',
   dueSoon: 'bg-warning-soft text-warning',
   closed: 'border border-line bg-canvas text-muted',
 };
