@@ -1,7 +1,10 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { InternalAxiosRequestConfig } from 'axios';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createMemoryRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { RouteErrorBoundary } from '@/app/router/RouteErrorBoundary';
 import i18n from '@/i18n';
 import { accessToken } from '@/shared/api/access-token';
 import { toastStore } from '@/shared/lib/toast';
@@ -71,6 +74,7 @@ describe('app', () => {
   });
 
   afterEach(() => {
+    cleanup();
     accessToken.clear();
     toastStore.clear();
   });
@@ -133,6 +137,26 @@ describe('app', () => {
     it('shows a page for unknown addresses', () => {
       renderApp('/unknown');
       expect(screen.getByText('Página não encontrada')).toBeInTheDocument();
+    });
+
+    it('renders the route error boundary when a route crashes', () => {
+      const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      try {
+        function Crash(): never {
+          throw new Error('Falha simulada de renderização');
+        }
+        const router = createMemoryRouter(
+          [{ path: '/boom', element: <Crash />, errorElement: <RouteErrorBoundary /> }],
+          { initialEntries: ['/boom'] },
+        );
+        render(<RouterProvider router={router} />);
+        expect(
+          screen.getByRole('heading', { name: 'Algo deu errado nesta página' }),
+        ).toBeInTheDocument();
+        expect(screen.getByText('Falha simulada de renderização')).toBeInTheDocument();
+      } finally {
+        spy.mockRestore();
+      }
     });
   });
 
@@ -412,6 +436,11 @@ describe('app', () => {
       expect(screen.getByText('2 avisos')).toBeInTheDocument();
       await userEvent.keyboard('{Escape}');
       expect(screen.queryByText('2 avisos')).not.toBeInTheDocument();
+
+      const countAfterFirstOpen = requests.length;
+      await userEvent.click(bell);
+      expect(await screen.findByText('2 avisos')).toBeInTheDocument();
+      expect(requests).toHaveLength(countAfterFirstOpen);
     });
 
     it('shows the empty state to professors without reading grades', async () => {
@@ -507,6 +536,42 @@ describe('app', () => {
       await userEvent.clear(await screen.findByLabelText('Nota de Ana em Lista 1'));
       expect(screen.getByText('Nota lançada não pode ser apagada')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Salvar notas' })).toBeDisabled();
+    });
+
+    it('ignores retyping the same saved grade and warns before leaving unsaved edits', async () => {
+      setup(professor, {
+        [gradesPath]: {
+          data: [
+            {
+              student: person,
+              grades: [{ activityId: id(4), value: 6, updatedAt: '2026-11-24T10:00:00.000Z' }],
+              average: 6,
+              status: 'RECOVERY',
+            },
+          ],
+        },
+      });
+      const router = renderApp(`/grades?discipline=${id(3)}`);
+      const first = await screen.findByLabelText('Nota de Ana em Lista 1');
+      await userEvent.clear(first);
+      await userEvent.type(first, '6');
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      expect(first).not.toHaveClass('bg-warning-soft');
+
+      const second = screen.getByLabelText('Nota de Ana em Lista 2');
+      await userEvent.type(second, '9');
+      expect(screen.getByText('1 alteração não salva')).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('link', { name: 'Disciplinas' }));
+      const modal = await screen.findByRole('dialog', { name: 'Sair sem salvar notas?' });
+      await userEvent.click(within(modal).getByRole('button', { name: 'Continuar editando' }));
+      expect(router.state.location.pathname).toBe('/grades');
+      expect(second).toHaveValue('9');
+
+      await userEvent.click(screen.getByRole('link', { name: 'Disciplinas' }));
+      const confirmModal = await screen.findByRole('dialog', { name: 'Sair sem salvar notas?' });
+      await userEvent.click(within(confirmModal).getByRole('button', { name: 'Sair sem salvar' }));
+      await waitFor(() => expect(router.state.location.pathname).toBe('/disciplines'));
     });
 
     it('shows partial average and missing grades to the student', async () => {

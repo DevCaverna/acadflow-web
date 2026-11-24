@@ -8,7 +8,7 @@ export function Toaster() {
   const { t } = useTranslation();
   const toasts = useSyncExternalStore(toastStore.subscribe, toastStore.get);
   return (
-    <div className="fixed top-4 right-4 z-10 flex w-80 max-w-[calc(100%-2rem)] flex-col gap-3">
+    <div className="fixed top-4 right-4 z-30 flex w-80 max-w-[calc(100%-2rem)] flex-col gap-3">
       {toasts.map(({ id, title, text }) => (
         <div
           key={id}

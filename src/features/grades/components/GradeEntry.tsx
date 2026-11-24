@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBlocker } from 'react-router';
 import { useActivities } from '@/features/activities/hooks/useActivities';
 import type { Activity } from '@/features/activities/schemas/activity.schema';
 import { GradeStatusBadge } from '@/features/grades/components/GradeStatusBadge';
@@ -9,6 +10,7 @@ import type { SaveGradeInput, StudentGrades } from '@/features/grades/schemas/gr
 import { Alert } from '@/shared/components/Alert';
 import { Button } from '@/shared/components/Button';
 import { EmptyState } from '@/shared/components/EmptyState';
+import { Modal } from '@/shared/components/Modal';
 import { QueryState } from '@/shared/components/QueryState';
 import { cn } from '@/shared/lib/cn';
 import { formatGrade } from '@/shared/lib/format';
@@ -52,11 +54,26 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
     return parseGrade(text) === undefined ? t('invalid') : undefined;
   }
 
-  const changes = Object.entries(edits).filter(([key, text]) => {
+  function hasChange(key: string): boolean {
+    const text = edits[key];
+    if (text === undefined) return false;
     if (text.trim() === '') return saved.has(key);
     const value = parseGrade(text);
     return value === undefined || value !== saved.get(key);
-  });
+  }
+
+  const changes = Object.entries(edits).filter(([key]) => hasChange(key));
+  const hasUnsaved = changes.length > 0 && !save.isPending;
+  const blocker = useBlocker(hasUnsaved);
+
+  useEffect(() => {
+    if (!hasUnsaved) return undefined;
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsaved]);
   const invalidKeys = changes.map(([key]) => key).filter((key) => getError(key) !== undefined);
   const hasErrors = invalidKeys.length > 0;
   const visible = students.filter(
@@ -169,7 +186,7 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
                         onChange={(event) => setEdits({ ...edits, [key]: event.target.value })}
                         className={cn(
                           'h-10 w-18 rounded-field border border-field text-center font-semibold',
-                          edits[key] !== undefined && 'border-2 border-accent bg-warning-soft',
+                          hasChange(key) && 'border-2 border-accent bg-warning-soft',
                           error && 'border-danger bg-danger-soft',
                         )}
                       />
@@ -205,6 +222,19 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
             </Button>
           </div>
         </div>
+      )}
+      {blocker.state === 'blocked' && (
+        <Modal title={t('unsavedTitle')} onClose={() => blocker.reset()}>
+          <div className="p-6 text-sm text-muted">{t('unsavedText')}</div>
+          <footer className="flex justify-end gap-3 border-t border-line px-6 py-4">
+            <Button variant="secondary" onClick={() => blocker.reset()}>
+              {t('stay')}
+            </Button>
+            <Button variant="danger" onClick={() => blocker.proceed()}>
+              {t('leaveWithoutSaving')}
+            </Button>
+          </footer>
+        </Modal>
       )}
     </div>
   );
