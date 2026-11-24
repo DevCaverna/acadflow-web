@@ -12,6 +12,7 @@ printf -v older_commit '%040d' 4
 printf -v digest 'sha256:%064d' 3
 candidate="$candidate_commit@$digest"
 export candidate_commit main_commit older_commit
+export GITHUB_SHA="$main_commit"
 export fixture_digest="$digest" fixture_candidate="$candidate"
 
 gh() {
@@ -19,18 +20,19 @@ gh() {
   body=$(jq -cn --arg candidate "$fixture_candidate" --arg commit "$main_commit" \
     '{candidate: $candidate, commit: $commit}')
   case $args in
-    *"/compare/$main_commit...main"*) printf 'ahead\n' ;;
-    *"/compare/$older_commit...$main_commit"*) printf '%s\n' "${COMPARE_STATUS:-ahead}" ;;
-    *'/actions/workflows/ci.yml/runs '*)
+    *"/compare/$main_commit...main"*) printf 'identical\n' ;;
+    *"/compare/$candidate_commit...main"* | *"/compare/$older_commit...main"*)
+      printf '%s\n' "${COMPARE_STATUS:-ahead}" ;;
+    *'/actions/workflows/ci.yml/runs '*branch=main*)
       local commit=$main_commit
       if [[ $args == *"head_sha=$older_commit"* ]]; then commit=$older_commit; fi
+      if [[ $args == *"head_sha=$candidate_commit"* ]]; then commit=$candidate_commit; fi
       jq -cn --arg commit "$commit" --arg result "${CI_RESULT:-success}" \
         '{workflow_runs: [{head_sha: $commit, conclusion: $result}]}'
       ;;
     *"/git/commits/$candidate_commit"*) printf 'signed-tree\n' ;;
     *"/git/commits/$older_commit"*) printf 'other-tree\n' ;;
     *"/git/commits/$main_commit"*) printf '%s\n' "${TARGET_TREE:-signed-tree}" ;;
-    *'/git/ref/heads/staging'* | *'/git/ref/heads/develop'*) printf '%s\n' "$main_commit" ;;
     *'/deployments/123/statuses'*) printf '[{"state":"success"}]\n' ;;
     *'/deployments/124/statuses'*) printf '[{"state":"failure"}]\n' ;;
     *'/deployments '*)
@@ -42,14 +44,16 @@ gh() {
           end'
       ;;
     *'/git/matching-refs/tags/v0.1.0')
-      if [[ ${TAG_EXISTS:-} == yes ]] || grep -q '^tag$' "$writes"; then
-        jq -cn --arg ref "$tag_ref" --arg sha "$main_commit" \
+      if [[ ${TAG_EXISTS:-} == yes || -s $temp/tag-commit ]]; then
+        local tagged=${TAG_COMMIT:-$main_commit}
+        if [[ -s $temp/tag-commit ]]; then tagged=$(< "$temp/tag-commit"); fi
+        jq -cn --arg ref "$tag_ref" --arg sha "$tagged" \
           '[{ref: $ref, object: {sha: $sha, type: "commit"}}]'
       else
         printf '[]\n'
       fi
       ;;
-    *'POST '*'/git/refs '*) printf 'tag\n' >> "$writes" ;;
+    *'POST '*'/git/refs '*) printf 'tag\n' >> "$writes"; printf '%s\n' "${args##*sha=}" > "$temp/tag-commit" ;;
     *'POST '*'/releases '*) printf 'draft\n' >> "$writes"; printf '456\n' ;;
     *'PATCH '*'/releases/456 '*) printf 'publish\n' >> "$writes" ;;
     *'/releases?per_page=100')
@@ -73,6 +77,7 @@ gh() {
 }
 
 cosign() { [[ $1 != "${FAIL_COSIGN:-}" ]]; }
+export temp
 export -f gh cosign
 
 assert_failure() {
@@ -99,31 +104,37 @@ fi
 grep -Fxq "digest=$digest" "$GITHUB_OUTPUT"
 DEPLOYED_DIGEST=other assert_failure 'No successful development deployment' \
   "${delivery[@]}" resolve staging "$candidate"
-TARGET_TREE=other assert_failure 'Candidate tree differs from staging' \
+COMPARE_STATUS=diverged assert_failure 'Commit is not in main' \
   "${delivery[@]}" resolve staging "$candidate"
 "${delivery[@]}" resolve staging "$candidate"
-NO_DEPLOYMENT=true "${delivery[@]}" snapshot development develop ''
+"${delivery[@]}" snapshot development ''
 grep -Fxq "revision=$main_commit" "$GITHUB_OUTPUT"
 grep -Fxq 'digest=' "$GITHUB_OUTPUT"
-"${delivery[@]}" snapshot staging staging ''
+"${delivery[@]}" snapshot staging "$candidate_commit"
 grep -Fxq "revision=$candidate_commit" "$GITHUB_OUTPUT"
-NO_DEPLOYMENT=true assert_failure 'Deploy to development first' \
-  "${delivery[@]}" snapshot staging staging ''
-COMPARE_STATUS=diverged assert_failure 'Commit is not in develop' \
-  "${delivery[@]}" snapshot development develop "$older_commit"
+assert_failure 'Deploy to development first' "${delivery[@]}" snapshot staging ''
+COMPARE_STATUS=diverged assert_failure 'Commit is not in main' \
+  "${delivery[@]}" snapshot development "$older_commit"
 CI_RESULT=failure assert_failure 'No successful push CI' \
-  "${delivery[@]}" snapshot development develop ''
-NO_DEPLOYMENT=true "${delivery[@]}" snapshot development develop "$older_commit"
+  "${delivery[@]}" snapshot development ''
+NO_DEPLOYMENT=true "${delivery[@]}" snapshot development "$older_commit"
 grep -Fxq "revision=$older_commit" "$GITHUB_OUTPUT"
 DEPLOYED_DIGEST=other assert_failure 'No successful staging deployment' \
-  "${delivery[@]}" release v0.1.0 "$candidate" "$main_commit"
-TARGET_TREE=other assert_failure 'No successful staging deployment matches main HEAD' \
-  "${delivery[@]}" release v0.1.0 '' "$main_commit"
+  "${delivery[@]}" release v0.1.0 "$candidate"
+NO_DEPLOYMENT=true assert_failure 'No successful staging deployment found' \
+  "${delivery[@]}" release v0.1.0 ''
+COMPARE_STATUS=diverged assert_failure 'Commit is not in main' \
+  "${delivery[@]}" release v0.1.0 "$candidate"
 [[ ! -s $writes ]]
-"${delivery[@]}" release v0.1.0 '' "$main_commit"
+"${delivery[@]}" release v0.1.0 ''
 diff -u <(printf 'tag\ndraft\npublish\n') "$writes"
+[[ $(< "$temp/tag-commit") == "$candidate_commit" ]]
 : > "$writes"
-DRAFT_EXISTS=yes TAG_EXISTS=yes "${delivery[@]}" release v0.1.0 '' "$main_commit"
+"${delivery[@]}" release v0.1.0 ''
+diff -u <(printf 'draft\npublish\n') "$writes"
+: > "$temp/tag-commit"
+: > "$writes"
+DRAFT_EXISTS=yes TAG_EXISTS=yes "${delivery[@]}" release v0.1.0 ''
 diff -u <(printf 'publish\n') "$writes"
 PROTECTED=false assert_failure 'Configure production required reviewers' \
   "${delivery[@]}" resolve production v0.1.0

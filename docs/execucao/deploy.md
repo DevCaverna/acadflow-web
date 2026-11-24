@@ -54,21 +54,23 @@ de cada ambiente. O CD da Web não acessa banco nem executa migrations.
 Os workflows manuais precisam chegar à branch padrão `main` para aparecerem no Actions.
 Execute todos a partir de `main`. Um push executa CI, mas não dispara publicação nem deploy.
 
-1. **Deploy Snapshot**: selecione `environment=development` e `branch=develop`. Deixe
-   `commit` vazio para usar o HEAD da branch, ou informe o SHA completo. É necessário CI
-   verde de push para esse commit. A imagem já implantada para o mesmo conteúdo pode ser
+1. **Deploy Snapshot**: selecione `environment=development`. Deixe `commit` vazio para usar
+   o commit da execução ou informe o SHA completo de outro commit de `main`. É necessário
+   CI verde de push em `main` para esse SHA. A imagem já implantada para o mesmo SHA pode ser
    reutilizada; se não houver, o build publica no GHCR, bloqueia vulnerabilidades críticas
    com Trivy e assina a imagem e o SBOM SPDX com Cosign/OIDC.
-2. Depois do PR `develop → staging` e CI verde, rode **Deploy Snapshot** para `staging`
-   com `branch=staging`. Ele reutiliza o digest implantado em `development` quando a
-   árvore Git coincide, mesmo se o SHA de merge for diferente. Sem candidata correspondente,
-   não há deploy nem rebuild.
-3. Após o PR `staging → main` e CI verde, rode **Create Release** com `vX.Y.Z`. Sem
-   `candidate`, ele usa o deploy homologado mais recente compatível com o HEAD da `main`.
-   `candidate` opcional aceita `COMMIT@sha256:DIGEST`. Tag e release registram o digest
-   verificado. Em caso de falha parcial, reexecute os jobs para a mesma versão e commit.
+2. Rode **Deploy Snapshot** para `staging` com o mesmo SHA que passou em `development`.
+   Sem um deployment bem-sucedido para esse SHA, não há deploy nem rebuild.
+3. Rode **Create Release** com `vX.Y.Z`. Por padrão, usa o deploy bem-sucedido mais
+   recente em `staging`; `candidate=COMMIT@sha256:DIGEST` permite escolher outro. A tag
+   aponta para o commit homologado em `main`, que não precisa ser o HEAD atual. Em caso de
+   falha parcial, reexecute o job com a mesma versão.
 4. Rode **Deploy Release** com `vX.Y.Z` e aguarde a aprovação de `production`. Ele verifica
    a imagem, a homologação e a assinatura e implanta o digest publicado sem reconstrução.
+
+Na primeira execução após a migração, comece em `development` com um commit de `main` que
+tenha CI verde, depois promova esse SHA para `staging`. Snapshots antigos sem CI de push em
+`main` para o SHA registrado não são candidatos a novas releases.
 
 O histórico de deployments registra versão, digest e resultado. O deploy verifica a página
 inicial e o conteúdo de `/runtime-config.js` na porta local. Depois do deploy, verifique a

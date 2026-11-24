@@ -35,12 +35,12 @@ Este documento formaliza o **Plano de Gerência de Configuração de Software** 
 
 ### 2.2 Linhas de Base (Baselines)
 
-| Baseline                    | Origem                       | Critério de Congelamento                                  | Uso                                        |
-| --------------------------- | ---------------------------- | --------------------------------------------------------- | ------------------------------------------ |
-| **Baseline de Design**      | `acadflow-design` (`main`)   | PR revisado (`v1.0` → `v1.3`)                             | Referência visual, tokens e acessibilidade |
-| **Baseline de Integração**  | Branch `develop`             | PR revisado + `Web / Validate` e `Web / Build` verdes     | Snapshot em `development`                  |
-| **Baseline de Homologação** | Branch `staging`             | PR `develop → staging` + mesmo digest de `development`    | Validação integrada com API `staging`      |
-| **Baseline de Produção**    | Branch `main` + Tag `vX.Y.Z` | PR `staging → main` + `Create Release` + aprovação humana | Imagem assinada por digest + SBOM          |
+| Baseline                    | Origem                      | Critério de Congelamento                              | Uso                                        |
+| --------------------------- | --------------------------- | ----------------------------------------------------- | ------------------------------------------ |
+| **Baseline de Design**      | `acadflow-design` (`main`)  | PR revisado (`v1.0` → `v1.3`)                         | Referência visual, tokens e acessibilidade |
+| **Baseline de Integração**  | Commit de `main`            | PR revisado + `Web / Validate` e `Web / Build` verdes | Snapshot em `development`                  |
+| **Baseline de Homologação** | Deployment em `development` | Mesmo commit e digest implantados em `staging`        | Validação integrada com API `staging`      |
+| **Baseline de Produção**    | Release `vX.Y.Z`            | Digest homologado em `staging` + aprovação humana     | Imagem assinada por digest + SBOM          |
 
 ### 2.3 Versionamento Semântico (`SemVer 2.0.0`)
 
@@ -58,27 +58,23 @@ As releases utilizam tags imutáveis `vX.Y.Z`:
 
 ```mermaid
 flowchart LR
-    Issue["Issue Linear ACA-*"] --> Feat["Branch feature/ACA-* (de develop)"]
-    Feat --> PRDev["PR + CI + CODEOWNERS -> develop"]
-    PRDev --> SnapDev["Deploy Snapshot (development)"]
-    SnapDev --> PRStg["PR develop -> staging"]
-    PRStg --> SnapStg["Deploy Snapshot (staging, mesmo digest)"]
-    SnapStg --> PRMain["PR staging -> main"]
-    PRMain --> Rel["Create Release vX.Y.Z + Aprovação CCB -> production"]
-
-    Prod["Incidente em Produção (main)"] --> Hotfix["Branch hotfix/ACA-* (de main)"]
-    Hotfix --> PRHot["PR revisado + CI -> main"]
-    PRHot --> RelPatch["Release vX.Y.(Z+1)"]
-    RelPatch --> Backport["Backport obrigatório -> staging e develop"]
+    Issue["Issue Linear ACA-*"] --> Feat["Branch temporária a partir de main"]
+    Feat --> PRMain["PR + CI + CODEOWNERS → main"]
+    PRMain --> SnapDev["Deploy Snapshot (development)"]
+    SnapDev --> SnapStg["Deploy Snapshot (staging, mesmo SHA e digest)"]
+    SnapStg --> Rel["Create Release vX.Y.Z"]
+    Rel --> Prod["Deploy Release (production, com aprovação)"]
 ```
 
 ### 3.2 Regras de Controle Aplicadas
 
-1. **Vínculo de origem:** alterações partem de issues `ACA-*` no Linear em branches `feature/ACA-*` (ou `hotfix/ACA-*` a partir da `main` em emergências, com backport obrigatório para `staging` e `develop`).
+1. **Vínculo de origem:** alterações partem de issues `ACA-*` no Linear em branches `feature/ACA-*` (ou `hotfix/ACA-*` em emergências), sempre a partir de `main`.
 2. **Alinhamento de contrato:** telas podem evoluir com mocks aderentes a [contratos-mock.md](../docs/contratos-mock.md) / [rastreabilidade.md](rastreabilidade.md), mas o contrato real em `acadflow-api` é a fonte definitiva antes de promoção para produção.
 3. **Aprovação por `CODEOWNERS`:** mudanças em `.github/workflows/`, `docker/`, `scripts/`, `src/` e `docs/` acionam revisão automática conforme [.github/CODEOWNERS](../.github/CODEOWNERS).
-4. **Proteção de branches e tags:** `develop`, `staging` e `main` exigem PR e CI verde; tags `v*` são imutáveis após publicação.
-5. **Dependências sob controle:** [.github/dependabot.yml](../.github/dependabot.yml) automatiza atualizações semanais de `npm` (`pnpm`), `docker` e `github-actions` contra `develop`.
+4. **Proteção de branches e tags:** configure `main` para exigir PR e CI verde; proteja tags `v*` contra alteração e exclusão.
+5. **Dependências sob controle:** [.github/dependabot.yml](../.github/dependabot.yml) automatiza atualizações semanais de `npm` (`pnpm`), `docker` e `github-actions` contra `main`.
+
+Hotfixes seguem o mesmo fluxo de promoção, normalmente com uma release patch.
 
 ---
 
@@ -90,7 +86,7 @@ flowchart LR
 
 | Aspecto             | Local (Vite)                 | `development`                           | `staging`                               | `production`                                                   |
 | ------------------- | ---------------------------- | --------------------------------------- | --------------------------------------- | -------------------------------------------------------------- |
-| Origem do código    | `feature/*` ou `develop`     | `develop` (Digest novo)                 | `staging` (Digest promovido)            | `main` (`vX.Y.Z`, Digest promovido)                            |
+| Origem do código    | `main` ou branch temporária  | Commit de `main`                        | Mesmo commit e digest de `development`  | Release `vX.Y.Z` do digest de `staging`                        |
 | Descoberta da API   | `.env` (`VITE_API_BASE_URL`) | `/runtime-config.js` (sem cache)        | `/runtime-config.js` (sem cache)        | `/runtime-config.js` (sem cache)                               |
 | Porta na VPS / Host | `5173` (Vite dev)            | `WEB_HOST_PORT` (ex.: `127.0.0.1:4100`) | `WEB_HOST_PORT` (ex.: `127.0.0.1:4200`) | `WEB_HOST_PORT` (ex.: `127.0.0.1:4300`)                        |
 | Contêiner interno   | `Dockerfile.dev`             | Nginx não privilegiado (`:8080`)        | Nginx não privilegiado (`:8080`)        | Nginx não privilegiado (`:8080`)                               |
@@ -114,7 +110,7 @@ flowchart LR
 - [ ] Dependências travadas via `pnpm install --frozen-lockfile`.
 - [ ] Bundle `dist/` gerado sem erros (`tsc --noEmit && vite build`) e servido via Nginx com fallback SPA (`try_files`).
 - [ ] Nenhuma credencial ou segredo exposto em variáveis `VITE_*` ou `/runtime-config.js`.
-- [ ] Mesmo digest `sha256` promovido entre `development` → `staging` → `production`.
+- [ ] Mesmo commit e digest `sha256` promovidos entre `development` → `staging` → `production`.
 - [ ] Scan **Trivy** limpo de vulnerabilidades críticas, assinatura **Cosign / OIDC** e **SBOM SPDX** anexados.
 - [ ] Consistência entre tag `vX.Y.Z` e [CHANGELOG.md](../CHANGELOG.md).
 

@@ -6,10 +6,14 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ### Adicionado
 
-- Documentação completa em `develop`: arquitetura real com fluxos Mermaid ([docs/arquitetura.md](docs/arquitetura.md)), catálogo do Design System e dos 17 componentes base ([docs/design-system.md](docs/design-system.md)), ADRs do frontend (`docs/adr/`), manual do usuário ([docs/manual-do-usuario.md](docs/manual-do-usuario.md)) e matriz de rastreabilidade ([docs/rastreabilidade.md](docs/rastreabilidade.md)).
+- Documentação completa: arquitetura com fluxos Mermaid ([docs/arquitetura.md](docs/arquitetura.md)), Design System ([docs/design-system.md](docs/design-system.md)), ADRs (`docs/adr/`), manual do usuário ([docs/manual-do-usuario.md](docs/manual-do-usuario.md)) e matriz de rastreabilidade ([docs/rastreabilidade.md](docs/rastreabilidade.md)).
 - Governança: `CHANGELOG.md`, `SECURITY.md`, `LICENSE` (MIT), `.github/CODEOWNERS`, `.github/dependabot.yml` e Plano de Gerência de Configuração ([docs/gerencia-de-configuracao.md](docs/gerencia-de-configuracao.md)).
 
-## [0.1.0] - 2026-11-24 _(em `develop`)_
+### Alterado
+
+- CI e snapshots passam a usar `main`; homologação e produção promovem o mesmo digest via GitHub Environments e releases.
+
+## [0.1.0] - 2026-11-24
 
 ### Adicionado
 

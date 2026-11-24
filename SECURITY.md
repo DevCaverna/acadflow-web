@@ -1,12 +1,8 @@
 # Política de Segurança — AcadFlow Web
 
-## Versões e Branches Suportadas
+## Versões Suportadas
 
-| Branch    | Estado                         | Suporte |
-| --------- | ------------------------------ | ------- |
-| `develop` | Linha ativa da aplicação React | Sim     |
-| `staging` | Homologação                    | Sim     |
-| `main`    | Produção                       | Sim     |
+As correções de segurança são integradas em `main` e promovidas por ambiente. Em produção, use a release estável mais recente.
 
 ## Boas Práticas no Cliente
 

@@ -8,13 +8,8 @@ on:
         required: true
         type: choice
         options: [development, staging]
-      branch:
-        description: Source code branch
-        required: true
-        type: choice
-        options: [develop, staging]
       commit:
-        description: 'Optional full commit SHA (defaults to source branch HEAD)'
+        description: 'Full SHA on main (defaults to this run commit)'
         required: false
         type: string
 
@@ -40,7 +35,6 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       TARGET: ${{ inputs.environment }}
-      SOURCE_BRANCH: ${{ inputs.branch }}
       SOURCE_COMMIT: ${{ inputs.commit }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -53,7 +47,7 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          bash .github/scripts/delivery.sh snapshot "$TARGET" "$SOURCE_BRANCH" "$SOURCE_COMMIT"
+          bash .github/scripts/delivery.sh snapshot "$TARGET" "$SOURCE_COMMIT"
 
   publish:
     needs: resolve

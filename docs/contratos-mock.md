@@ -1,6 +1,6 @@
 # Contratos para mocks
 
-**Fonte de referência:** [contratos-api.md](https://github.com/DevCaverna/acadflow-api/blob/develop/docs/contratos-api.md). Em caso de divergência, vale o documento da API.
+**Fonte de referência:** [contratos-api.md](https://github.com/DevCaverna/acadflow-api/blob/main/docs/contratos-api.md). Em caso de divergência, vale o documento da API.
 
 ## Tipos
 
