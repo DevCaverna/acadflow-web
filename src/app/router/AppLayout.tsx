@@ -32,7 +32,7 @@ export function AppLayout({ user }: AppLayoutProps) {
   ];
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="flex flex-col gap-4 border-line bg-surface px-4 py-4 max-md:border-b md:sticky md:top-0 md:h-screen md:w-62 md:shrink-0 md:gap-8 md:border-r md:py-6">
+      <aside className="flex flex-col gap-4 border-line bg-surface px-4 py-4 max-md:border-b md:sticky md:top-0 md:z-10 md:h-screen md:w-62 md:shrink-0 md:gap-8 md:border-r md:py-6">
         <div className="flex items-center gap-2.5 px-2">
           <img src="/icons/icon-simple.svg" alt="" width={36} height={36} />
           <span className="font-display text-xl font-bold tracking-tight">{t('appName')}</span>
