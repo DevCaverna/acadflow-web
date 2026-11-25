@@ -4,6 +4,8 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-25
+
 ### Adicionado
 
 - Tela de cadastro de professores e alunos, com escolha do perfil e acesso imediato após criar a conta.
