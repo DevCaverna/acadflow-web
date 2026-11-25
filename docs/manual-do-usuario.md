@@ -23,24 +23,24 @@ Este guia descreve os fluxos disponíveis na interface web do **AcadFlow** para 
 
 ## 2. Jornada do Professor
 
-### Gerenciar Disciplinas (`/disciplines` e `/disciplines/:disciplineId`)
+### Gerenciar Disciplinas (`/professor/disciplines` e `/professor/disciplines/:disciplineId`)
 
 - **Listar e buscar:** filtre suas disciplinas por nome ou código e navegue pelas páginas quando houver mais de 20 itens.
 - **Criar disciplina:** clique em **Nova disciplina**, informe **Código** (ex.: `BD-204`), **Semestre** (`YYYY.1` ou `YYYY.2`), **Nome** e **Descrição** (opcional). O par `(código, semestre)` não pode se repetir.
 - **Editar / excluir:** na página da disciplina, você pode editar **Nome** e **Descrição** (código e semestre não mudam após a criação). A exclusão só é permitida se a disciplina não possuir alunos matriculados nem atividades.
 
-### Gerenciar Atividades e Anexos (`/disciplines/:disciplineId`)
+### Gerenciar Atividades e Anexos (`/professor/disciplines/:disciplineId`)
 
 - **Criar atividade:** informe **Título**, **Descrição** (opcional) e **Data limite** (opcional; na criação, não aceita data no passado). Ao salvar, a atividade fica **imediatamente visível** para os alunos matriculados.
 - **Acompanhamento:** cada atividade mostra o badge de prazo (_Aberta_, _Vence em X dias_ ou _Prazo encerrado_) e uma barra de progresso com quantos alunos já possuem nota lançada.
 - **Anexos de apoio:** clique para abrir os anexos da atividade e enviar arquivos **PDF, PNG ou JPG de até 10 MB**, baixar ou remover anexos. _(Requer branch `ACA-25` na API; atividades com notas ou anexos não podem ser excluídas.)_
 
-### Gerenciar Matrículas (`/disciplines/:disciplineId`)
+### Gerenciar Matrículas (`/professor/disciplines/:disciplineId`)
 
 - Na seção de alunos matriculados, clique para **Matricular aluno**, digite ao menos **3 caracteres** (nome ou e-mail) para buscar candidatos e adicione o aluno à turma.
 - Para remover uma matrícula, o aluno **não** pode ter notas lançadas na disciplina. _(Requer branch `ACA-24` na API.)_
 
-### Lançar Notas (`/grades`)
+### Lançar Notas (`/professor/grades`)
 
 - Selecione a disciplina nas pílulas no topo (ou acesse diretamente pelo link na página da disciplina).
 - Filtre a tabela por **Todos**, **Em recuperação** ou **Sem notas**.
@@ -52,12 +52,12 @@ Este guia descreve os fluxos disponíveis na interface web do **AcadFlow** para 
 
 ## 3. Jornada do Aluno
 
-### Acompanhar Disciplinas e Atividades (`/disciplines` e `/disciplines/:disciplineId`)
+### Acompanhar Disciplinas e Atividades (`/student/disciplines` e `/student/disciplines/:disciplineId`)
 
 - Você visualiza exclusivamente as disciplinas em que está matriculado.
 - Ao abrir uma disciplina, vê a lista de atividades ordenadas pelo próximo prazo (atividades sem prazo aparecem ao final) e pode **baixar anexos** disponibilizados pelo professor.
 
-### Consultar Notas e Média (`/grades`)
+### Consultar Notas e Média (`/student/grades`)
 
 - Selecione a disciplina nas pílulas superiores para visualizar:
   - **Média** (exibida como _parcial_ enquanto houver atividades sem nota lançada, mostrando quantas já foram corrigidas) e **Situação** (`Aprovado` $\ge 7{,}0$, `Recuperação` $5{,}0\text{ a }6{,}9$, `Reprovado` $< 5{,}0$, ou `Sem notas`).

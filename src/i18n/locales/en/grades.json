@@ -54,5 +54,7 @@
   "byActivity": "Grades by activity",
   "approvalLine": "dashed line = 7.0",
   "openGrades": "See all and enter grades",
-  "seeActivities": "See activities"
+  "seeActivities": "See activities",
+  "saveFailed": "Could not save",
+  "saveFailedHint": "The grades that failed are still in the table."
 }

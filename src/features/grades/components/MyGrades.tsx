@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { useActivities } from '@/features/activities/hooks/useActivities';
+import { useAreaRoutes } from '@/features/auth/hooks/useAreaRoutes';
 import type { Discipline } from '@/features/disciplines/schemas/discipline.schema';
 import { GradeStatusBadge } from '@/features/grades/components/GradeStatusBadge';
 import { useMyGrades } from '@/features/grades/hooks/useGrades';
@@ -34,6 +35,7 @@ type MyGradesProps = {
 /** Notas, média e situação do aluno; parciais enquanto falta nota. */
 export function MyGrades({ discipline }: MyGradesProps) {
   const { t, i18n } = useTranslation(['grades', 'activities']);
+  const area = useAreaRoutes();
   const activities = useActivities(discipline.id);
   const summary = useMyGrades(discipline.id);
   return (
@@ -93,7 +95,7 @@ export function MyGrades({ discipline }: MyGradesProps) {
                     text={t('activities:empty')}
                     action={
                       <Link
-                        to={`/disciplines/${discipline.id}`}
+                        to={area.discipline(discipline.id)}
                         className="text-sm font-semibold text-link"
                       >
                         {t('seeActivities')}

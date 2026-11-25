@@ -55,7 +55,7 @@ export function AttachmentsModal({ activity, canEdit, onClose }: AttachmentsModa
       <div className="flex flex-col gap-4.5 p-6">
         {invalid && <Alert>{t('attachments.invalid')}</Alert>}
         {error && <Alert>{getErrorMessage(error)}</Alert>}
-        <QueryState query={query}>
+        <QueryState query={query} skeleton="list">
           {(attachments) =>
             attachments.length === 0 ? (
               <p className="text-sm text-muted">{t('attachments.empty')}</p>
@@ -96,7 +96,7 @@ export function AttachmentsModal({ activity, canEdit, onClose }: AttachmentsModa
                             remove.mutate(id, {
                               onSuccess: () => {
                                 setConfirmingId(null);
-                                toastStore.show(t('attachments.removed'), name);
+                                toastStore.show(t('attachments.removed'), name, 'info');
                               },
                             })
                           }

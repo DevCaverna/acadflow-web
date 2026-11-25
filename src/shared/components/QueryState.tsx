@@ -1,5 +1,5 @@
 import type { UseQueryResult } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getErrorKind, getErrorMessage } from '@/shared/api/api-error';
 import { Alert } from '@/shared/components/Alert';
@@ -16,17 +16,27 @@ type QueryStateProps<Data> = {
    * @default 'alert'
    */
   errorView?: 'alert' | 'page' | 'fullScreen';
+  /**
+   * Formato do carregamento.
+   * @default 'card'
+   */
+  skeleton?: ComponentProps<typeof Skeleton>['variant'];
   /** Conteúdo quando há dados. */
   children: (data: Data) => ReactNode;
 };
 
 /** Trata carregamento e erro de uma consulta antes de exibir os dados. */
-export function QueryState<Data>({ query, errorView = 'alert', children }: QueryStateProps<Data>) {
+export function QueryState<Data>({
+  query,
+  errorView = 'alert',
+  skeleton,
+  children,
+}: QueryStateProps<Data>) {
   const { t } = useTranslation();
   if (query.data !== undefined) return children(query.data);
 
   const paused = query.fetchStatus === 'paused';
-  if (!paused && !query.error) return <Skeleton />;
+  if (!paused && !query.error) return <Skeleton variant={skeleton} />;
 
   const kind = paused ? 'offline' : getErrorKind(query.error);
   const message = paused ? t('errors:network') : getErrorMessage(query.error);

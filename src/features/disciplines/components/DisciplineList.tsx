@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { useAreaRoutes } from '@/features/auth/hooks/useAreaRoutes';
 import { DisciplineStats } from '@/features/disciplines/components/DisciplineStats';
 import { useDisciplines } from '@/features/disciplines/hooks/useDisciplines';
 import { Button } from '@/shared/components/Button';
@@ -34,10 +35,11 @@ export function DisciplineList({
   onClearSearch,
 }: DisciplineListProps) {
   const { t } = useTranslation('disciplines');
+  const area = useAreaRoutes();
   const query = useDisciplines({ page, filter: search ? { search } : undefined });
 
   return (
-    <QueryState query={query} errorView="page">
+    <QueryState query={query} errorView="page" skeleton="cards">
       {({ data, perPage, total }) => {
         if (total === 0) {
           return search ? (
@@ -92,7 +94,7 @@ export function DisciplineList({
                     </p>
                   )}
                   <Link
-                    to={`/disciplines/${id}`}
+                    to={area.discipline(id)}
                     aria-label={`${t('open')}: ${name}`}
                     className="flex h-11 items-center justify-center rounded-button border border-field text-sm font-semibold hover:bg-canvas"
                   >

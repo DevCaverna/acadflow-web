@@ -1,6 +1,7 @@
 import { TIME } from '@/shared/config/time.constants';
 
-export type Toast = { id: number; title: string; text?: string };
+export type ToastVariant = 'success' | 'error' | 'info';
+export type Toast = { id: number; title: string; text?: string; variant: ToastVariant };
 
 const listeners = new Set<() => void>();
 const timers = new Map<number, ReturnType<typeof setTimeout>>();
@@ -31,9 +32,9 @@ export const toastStore = {
     timers.clear();
     if (toasts.length > 0) update([]);
   },
-  show: (title: string, text?: string): void => {
+  show: (title: string, text?: string, variant: ToastVariant = 'success'): void => {
     const id = nextId++;
-    update([...toasts, { id, title, text }]);
+    update([...toasts, { id, title, text, variant }]);
     timers.set(
       id,
       setTimeout(() => toastStore.dismiss(id), TIME.DEFAULT_TOAST_MS),

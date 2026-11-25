@@ -4,6 +4,7 @@ import type { ErrorKind } from '@/shared/api/api-error';
 import { Button } from '@/shared/components/Button';
 import { ErrorPage } from '@/shared/components/ErrorPage';
 import { ErrorPageLink } from '@/shared/components/ErrorPageLink';
+import { ROUTES } from '@/shared/config/routes';
 import { useLogout } from '@/shared/hooks/useLogout';
 
 /** Props de {@link QueryErrorPage}. */
@@ -42,7 +43,7 @@ export function QueryErrorPage({ kind, message, fullScreen, onRetry }: QueryErro
               {t(kind === 'offline' ? 'errorPages.reconnect' : 'retry')}
             </Button>
           ) : (
-            <ErrorPageLink to="/">{t('errorPages.home')}</ErrorPageLink>
+            <ErrorPageLink to={ROUTES.root}>{t('errorPages.home')}</ErrorPageLink>
           )}
           <Button variant="secondary" className="h-12 px-5.5" onClick={logout}>
             {t(kind === 'forbidden' ? 'errorPages.otherAccount' : 'errorPages.login')}

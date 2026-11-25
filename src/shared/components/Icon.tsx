@@ -10,6 +10,8 @@ const PATHS = {
   download: 'M12 4v11M7 11l5 5 5-5M5 20h14',
   moon: 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z',
   sun: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19',
+  calendar: 'M8 3v4M16 3v4M4 9h16M5 5h14v16H5z',
+  home: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z',
   check: 'M5 12l5 5L20 7',
   close: 'M6 6l12 12M18 6L6 18',
   disciplines: 'M4 19V5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14',

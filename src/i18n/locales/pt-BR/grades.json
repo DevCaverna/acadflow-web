@@ -54,5 +54,7 @@
   "byActivity": "Notas por atividade",
   "approvalLine": "linha tracejada = 7,0",
   "openGrades": "Ver todos e lançar notas",
-  "seeActivities": "Ver atividades"
+  "seeActivities": "Ver atividades",
+  "saveFailed": "Não foi possível salvar",
+  "saveFailedHint": "As notas que falharam continuam na tabela."
 }

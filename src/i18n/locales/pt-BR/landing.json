@@ -1,0 +1,69 @@
+{
+  "nav": "Principal",
+  "badge": "Gestão acadêmica de forma simples",
+  "intro": "Professores cadastram disciplinas, criam atividades e lançam notas. Alunos acompanham a média e a situação em cada disciplina.",
+  "enter": "Entrar no AcadFlow",
+  "preview": {
+    "title": "Lançar notas · Banco de Dados",
+    "student": "Visão do aluno",
+    "status": "Recuperação (parcial)",
+    "progress": "3 de 5 atividades com nota"
+  },
+  "professors": {
+    "short": "Professores",
+    "label": "Para professores",
+    "title": "Menos planilha, mais aula."
+  },
+  "students": {
+    "short": "Alunos",
+    "label": "Para alunos",
+    "title": "Saiba onde você está em cada disciplina."
+  },
+  "features": {
+    "classes": {
+      "title": "Disciplinas e turmas",
+      "text": "Cadastre a disciplina com código e semestre e veja os alunos matriculados."
+    },
+    "activities": {
+      "title": "Atividades com prazo",
+      "text": "Crie a atividade e ela já aparece para a turma, com data limite opcional."
+    },
+    "grades": {
+      "title": "Notas numa tabela só",
+      "text": "Lance notas de 0,0 a 10,0, com validação antes de salvar e média calculada."
+    },
+    "disciplines": {
+      "title": "Suas disciplinas",
+      "text": "Veja só as disciplinas em que você está matriculado, com professor e atividades."
+    },
+    "average": {
+      "title": "Média e situação",
+      "text": "Acompanhe a média parcial e saiba se está aprovado, em recuperação ou reprovado."
+    },
+    "deadlines": {
+      "title": "Prazos à vista",
+      "text": "As próximas datas limite aparecem logo na sua página inicial."
+    }
+  },
+  "how": "Como funciona",
+  "steps": {
+    "account": {
+      "title": "Cada um cria sua conta",
+      "text": "Como professor ou aluno."
+    },
+    "create": {
+      "title": "O professor cria",
+      "text": "Disciplinas, matrículas e atividades com prazo."
+    },
+    "grade": {
+      "title": "O professor lança notas",
+      "text": "Uma nota por aluno em cada atividade."
+    },
+    "follow": {
+      "title": "O aluno acompanha",
+      "text": "Média e situação atualizadas a cada nota."
+    }
+  },
+  "footer": "© 2026 AcadFlow · Projeto acadêmico",
+  "security": "Senhas protegidas com hash · acesso por perfil"
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlocker } from 'react-router';
 import { useActivities } from '@/features/activities/hooks/useActivities';
@@ -37,6 +37,7 @@ type GradeTableProps = {
 /** Tabela editável de notas; envia só as alteradas. */
 function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
   const { t, i18n } = useTranslation('grades');
+  const unsavedId = useId();
   const save = useSaveGrades(disciplineId);
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [filter, setFilter] = useState<Filter>('all');
@@ -92,6 +93,7 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
     save.mutate(inputs, {
       onSuccess: (failed) => {
         if (failed.length === 0) toastStore.show(t('saved'), t('savedHint'));
+        else toastStore.show(t('saveFailed'), t('saveFailedHint'), 'error');
         const keys = new Set(failed.map(getKey));
         setEdits((current) =>
           Object.fromEntries(Object.entries(current).filter(([key]) => keys.has(key))),
@@ -224,8 +226,15 @@ function GradeTable({ disciplineId, activities, students }: GradeTableProps) {
         </div>
       )}
       {blocker.state === 'blocked' && (
-        <Modal title={t('unsavedTitle')} onClose={() => blocker.reset()}>
-          <div className="p-6 text-sm text-muted">{t('unsavedText')}</div>
+        <Modal
+          role="alertdialog"
+          describedBy={unsavedId}
+          title={t('unsavedTitle')}
+          onClose={() => blocker.reset()}
+        >
+          <div id={unsavedId} className="p-6">
+            <Alert variant="warning">{t('unsavedText')}</Alert>
+          </div>
           <footer className="flex justify-end gap-3 border-t border-line px-6 py-4">
             <Button variant="secondary" onClick={() => blocker.reset()}>
               {t('stay')}
@@ -252,9 +261,9 @@ export function GradeEntry({ disciplineId }: GradeEntryProps) {
   const activities = useActivities(disciplineId);
   const grades = useGrades(disciplineId);
   return (
-    <QueryState query={activities}>
+    <QueryState query={activities} skeleton="table">
       {(activityData) => (
-        <QueryState query={grades}>
+        <QueryState query={grades} skeleton="table">
           {(students) => {
             if (activityData.length === 0) {
               return (

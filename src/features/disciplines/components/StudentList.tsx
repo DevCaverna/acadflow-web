@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { useAreaRoutes } from '@/features/auth/hooks/useAreaRoutes';
 import type { Student } from '@/features/disciplines/schemas/discipline.schema';
 import { EnrollModal } from '@/features/enrollments/components/EnrollModal';
 import { useRemoveEnrollment } from '@/features/enrollments/hooks/useEnrollments';
@@ -21,6 +22,7 @@ type StudentListProps = {
 /** Alunos matriculados na disciplina, com a média, e gestão de matrículas. */
 export function StudentList({ disciplineId }: StudentListProps) {
   const { t, i18n } = useTranslation(['disciplines', 'grades', 'enrollments']);
+  const area = useAreaRoutes();
   const query = useGrades(disciplineId);
   const remove = useRemoveEnrollment(disciplineId);
   const [adding, setAdding] = useState(false);
@@ -33,7 +35,7 @@ export function StudentList({ disciplineId }: StudentListProps) {
 
   return (
     <>
-      <QueryState query={query}>
+      <QueryState query={query} skeleton="list">
         {(students) => (
           <aside className="overflow-hidden rounded-card border border-line bg-surface">
             <header className="flex items-center justify-between border-b border-line px-5 py-4.5">
@@ -75,7 +77,7 @@ export function StudentList({ disciplineId }: StudentListProps) {
               </ul>
             )}
             <Link
-              to={`/grades?discipline=${disciplineId}`}
+              to={area.disciplineGrades(disciplineId)}
               className="flex h-12 items-center justify-center text-sm font-semibold text-link"
             >
               {t('grades:openGrades')}
@@ -94,7 +96,7 @@ export function StudentList({ disciplineId }: StudentListProps) {
           onConfirm={() =>
             remove.mutate(removing.id, {
               onSuccess: () => {
-                toastStore.show(t('enrollments:removed'), removing.name);
+                toastStore.show(t('enrollments:removed'), removing.name, 'info');
                 closeRemoval();
               },
             })

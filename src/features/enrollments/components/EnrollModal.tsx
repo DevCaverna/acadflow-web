@@ -44,7 +44,7 @@ export function EnrollModal({ disciplineId, onClose }: EnrollModalProps) {
         {search.length < MIN_SEARCH_LENGTH ? (
           <p className="text-sm text-muted">{t('searchHint')}</p>
         ) : (
-          <QueryState query={query}>
+          <QueryState query={query} skeleton="list">
             {(students) =>
               students.length === 0 ? (
                 <p className="text-sm text-muted">{t('noCandidates')}</p>

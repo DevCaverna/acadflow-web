@@ -52,7 +52,7 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
         <h2 className="font-display text-2xl font-semibold">{t('title')}</h2>
         {createButton}
       </header>
-      <QueryState query={query}>
+      <QueryState query={query} skeleton="table">
         {(activities) =>
           activities.length === 0 ? (
             <EmptyState
@@ -165,7 +165,7 @@ export function ActivityList({ discipline, canEdit }: ActivityListProps) {
           onConfirm={() =>
             remove.mutate(removing.id, {
               onSuccess: () => {
-                toastStore.show(t('removed'), removing.title);
+                toastStore.show(t('removed'), removing.title, 'info');
                 closeRemoval();
               },
             })

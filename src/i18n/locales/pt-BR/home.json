@@ -1,0 +1,53 @@
+{
+  "greeting": {
+    "morning": "Bom dia, {{name}}",
+    "afternoon": "Boa tarde, {{name}}",
+    "evening": "Boa noite, {{name}}"
+  },
+  "pendingGrades_one": "{{count}} nota para lançar",
+  "pendingGrades_other": "{{count}} notas para lançar",
+  "deadlines_one": "{{count}} prazo nos próximos 7 dias",
+  "deadlines_other": "{{count}} prazos nos próximos 7 dias",
+  "deadlines14_one": "{{count}} prazo nos próximos 14 dias",
+  "deadlines14_other": "{{count}} prazos nos próximos 14 dias",
+  "newGrades_one": "{{count}} nota nova",
+  "newGrades_other": "{{count}} notas novas",
+  "shortcuts": {
+    "label": "Atalhos",
+    "grades": {
+      "title": "Lançar notas",
+      "text": "Por atividade e aluno"
+    },
+    "activity": {
+      "title": "Nova atividade",
+      "text": "Escolha a disciplina"
+    },
+    "discipline": {
+      "title": "Nova disciplina",
+      "text": "Código, nome e semestre"
+    }
+  },
+  "continue": "Continue de onde parou",
+  "withoutGrade_one": "{{count}} sem nota",
+  "withoutGrade_other": "{{count}} sem nota",
+  "closedAt": "{{discipline}} · prazo encerrado em {{date}}",
+  "gradedLabel": "Notas lançadas",
+  "gradedOf": "{{graded}} de {{total}}",
+  "continueAction": "Continuar lançamento",
+  "nothingPending": "Nenhuma nota pendente em atividades encerradas.",
+  "week": "Próximos 7 dias",
+  "next14": "Próximos 14 dias",
+  "noDeadlines": "Nenhum prazo neste período.",
+  "classes": "Minhas turmas",
+  "students_one": "{{count}} aluno",
+  "students_other": "{{count}} alunos",
+  "nextDeadline": "Próximo prazo",
+  "dueAt": "{{discipline}} · até {{date}}",
+  "seeDiscipline": "Ver disciplina",
+  "newGrade": "Nota nova",
+  "noNewGrades": "Nenhuma nota nos últimos 7 dias.",
+  "allGrades": "Ver todas as notas",
+  "myDisciplines": "Minhas disciplinas",
+  "partialHint": "Médias parciais consideram só as atividades já corrigidas.",
+  "noEnrollments": "Você ainda não está matriculado em nenhuma disciplina."
+}

@@ -67,8 +67,10 @@
       "label": "Erro inesperado",
       "title": "Algo deu errado nesta página",
       "text": "Não foi possível exibir esta tela agora. Você pode recarregar ou voltar ao início."
-    }
+    },
+    "roleDetail": "Perfil exigido: {{required}} · seu perfil: {{current}}"
   },
   "understood": "Entendi",
-  "blockedTitle": "Não é possível excluir"
+  "blockedTitle": "Não é possível excluir",
+  "home": "Início"
 }

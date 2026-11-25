@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getApiError, getErrorMessage } from '@/shared/api/api-error';
 import { Alert } from '@/shared/components/Alert';
@@ -32,9 +33,15 @@ export function ConfirmDialog({
   onClose,
 }: ConfirmDialogProps) {
   const { t } = useTranslation();
+  const textId = useId();
   const blocked = getApiError(error)?.statusCode === 409;
   return (
-    <Modal title={blocked ? t('blockedTitle') : title} onClose={onClose}>
+    <Modal
+      role="alertdialog"
+      describedBy={textId}
+      title={blocked ? t('blockedTitle') : title}
+      onClose={onClose}
+    >
       <div className="flex flex-col gap-4 p-6">
         <span
           className={cn(
@@ -44,7 +51,11 @@ export function ConfirmDialog({
         >
           <Icon name={blocked ? 'lock' : 'remove'} />
         </span>
-        <p role={blocked ? 'alert' : undefined} className="text-[15px] text-muted wrap-anywhere">
+        <p
+          id={textId}
+          role={blocked ? 'alert' : undefined}
+          className="text-[15px] text-muted wrap-anywhere"
+        >
           {blocked ? getErrorMessage(error) : message}
         </p>
         {error && !blocked && <Alert>{getErrorMessage(error)}</Alert>}

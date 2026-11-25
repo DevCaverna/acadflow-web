@@ -4,6 +4,7 @@ import { useRouteError } from 'react-router';
 import { Button } from '@/shared/components/Button';
 import { ErrorPage } from '@/shared/components/ErrorPage';
 import { ErrorPageLink } from '@/shared/components/ErrorPageLink';
+import { ROUTES } from '@/shared/config/routes';
 
 function reload() {
   window.location.reload();
@@ -32,7 +33,7 @@ export function RouteErrorBoundary() {
           <Button className="h-12 px-5.5" onClick={reload}>
             {t(offline ? 'errorPages.reconnect' : 'errorPages.reload')}
           </Button>
-          <ErrorPageLink to="/" variant="secondary">
+          <ErrorPageLink to={ROUTES.root} variant="secondary">
             {t('errorPages.home')}
           </ErrorPageLink>
         </>

@@ -67,8 +67,10 @@
       "label": "Unexpected error",
       "title": "Something went wrong on this page",
       "text": "Could not display this screen right now. You can reload or go back to start."
-    }
+    },
+    "roleDetail": "Required profile: {{required}} · your profile: {{current}}"
   },
   "understood": "Got it",
-  "blockedTitle": "Cannot delete"
+  "blockedTitle": "Cannot delete",
+  "home": "Home"
 }
