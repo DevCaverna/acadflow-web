@@ -11,7 +11,7 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ### Alterado
 
-- CI e snapshots passam a usar `main`; homologação e produção promovem o mesmo digest via GitHub Environments e releases.
+- CI e snapshots usam `main`. Os deploys são independentes, e a criação de release atualiza a versão do pacote e o changelog.
 
 ## [0.1.0] - 2026-11-24
 

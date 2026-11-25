@@ -4,12 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (vX.Y.Z)'
+        description: 'Stable SemVer (X.Y.Z)'
         required: true
-        type: string
-      candidate:
-        description: 'Override the latest successful staging candidate (COMMIT@sha256:DIGEST)'
-        required: false
         type: string
 
 permissions: {}
@@ -22,24 +18,29 @@ jobs:
   release:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     permissions:
-      actions: read
+      actions: write
       contents: write
-      deployments: read
-      packages: read
+      packages: write
+      id-token: write
     env:
       GH_TOKEN: ${{ github.token }}
       VERSION: ${{ inputs.version }}
-      CANDIDATE: ${{ inputs.candidate }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+        with:
+          version: v0.76.2
       - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
       - name: Create or resume the release
         shell: bash
         run: |
           set -euo pipefail
           printf '%s' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          bash .github/scripts/delivery.sh release "$VERSION" "$CANDIDATE"
+          bash .github/scripts/delivery.sh release "$VERSION"

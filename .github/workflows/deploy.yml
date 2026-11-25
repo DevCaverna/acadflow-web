@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Published version (vX.Y.Z)'
+        description: 'Published version (X.Y.Z)'
         required: true
         type: string
 
@@ -20,13 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      actions: read
       contents: read
-      deployments: read
       packages: read
     outputs:
       revision: ${{ steps.resolve.outputs.revision }}
       digest: ${{ steps.resolve.outputs.digest }}
+      version: ${{ steps.resolve.outputs.version }}
     env:
       GH_TOKEN: ${{ github.token }}
       VERSION: ${{ inputs.version }}
@@ -35,7 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532 # v4.1.3
-      - name: Verify the image and promotion policy
+      - name: Verify the release image and production protection
         id: resolve
         shell: bash
         run: |
@@ -53,6 +52,6 @@ jobs:
     secrets: inherit
     with:
       environment: production
-      version: ${{ inputs.version }}
+      version: ${{ needs.resolve.outputs.version }}
       revision: ${{ needs.resolve.outputs.revision }}
       digest: ${{ needs.resolve.outputs.digest }}

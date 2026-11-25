@@ -115,7 +115,7 @@ pnpm pr
 
 - Abrir issue `ACA-*`, descrever plano e desenvolver somente dentro do escopo aprovado.
 - `main` é a única branch permanente. Criar branch `feature/ACA-<numero>-slug` a partir de `main` e abrir PR para `main`, com revisão e CI.
-- Promover o mesmo digest entre os GitHub Environments `development`, `staging` e `production`; produção usa uma release `vX.Y.Z` homologada em `staging`.
+- Deploys por GitHub Environment são independentes. Use snapshots de `main` em `development` e `staging`; produção usa a imagem assinada de uma release.
 - Conventional Commits em inglês, com mensagem curta no formato `<prefixo>: <descrição>`:
 
   | Prefixo     | Quando usar                |

@@ -5,7 +5,7 @@ fail() { printf 'Delivery: %s\n' "$*" >&2; exit 1; }
 
 repo="repos/${GITHUB_REPOSITORY:?}"
 image="ghcr.io/${GITHUB_REPOSITORY,,}"
-snapshot_signer="${GITHUB_SERVER_URL:?}/${GITHUB_REPOSITORY}/.github/workflows/deploy-snapshot.yml@refs/heads/main"
+workflow_root="${GITHUB_SERVER_URL:?}/${GITHUB_REPOSITORY}/.github/workflows"
 sha_pattern='[0-9a-f]{40}'
 digest_pattern='sha256:[0-9a-f]{64}'
 version_pattern='(0|[1-9][0-9]*)'
@@ -16,72 +16,54 @@ parse_candidate() {
   digest=${BASH_REMATCH[2]}
 }
 
-validate_version() {
-  [[ $1 =~ ^v$version_pattern\.$version_pattern\.$version_pattern$ ]] || fail 'Expected vX.Y.Z.'
+version_tag() {
+  local version=${1#v}
+  [[ $version =~ ^$version_pattern\.$version_pattern\.$version_pattern$ ]] || fail 'Expected X.Y.Z.'
+  printf 'v%s\n' "$version"
 }
 
 commit_tree() { gh api "$repo/git/commits/$1" --jq '.tree.sha'; }
 
 verify_candidate() {
-  tree=$(commit_tree "$revision")
-  local -a identity=(--certificate-identity "$snapshot_signer"
-    --certificate-oidc-issuer 'https://token.actions.githubusercontent.com')
-  cosign verify "${identity[@]}" -a "revision=$revision" -a "tree=$tree" "$image@$digest" > /dev/null
-  cosign verify-attestation "${identity[@]}" --type spdxjson "$image@$digest" > /dev/null
+  local candidate_tree=${1:-} identity
+  shift
+  if [[ -z $candidate_tree ]]; then candidate_tree=$(commit_tree "$revision"); fi
+  local issuer='https://token.actions.githubusercontent.com' workflow
+  for workflow in "$@"; do
+    identity="$workflow_root/$workflow.yml@refs/heads/main"
+    if cosign verify --certificate-identity "$identity" --certificate-oidc-issuer "$issuer" \
+      -a "revision=$revision" -a "tree=$candidate_tree" "$image@$digest" > /dev/null; then
+      cosign verify-attestation --certificate-identity "$identity" --certificate-oidc-issuer "$issuer" \
+        --type spdxjson "$image@$digest" > /dev/null
+      return
+    fi
+  done
+  fail 'Candidate signature could not be verified.'
 }
 
-require_branch_ci() {
-  local branch=$1 commit=$2
-  gh api --method GET "$repo/actions/workflows/ci.yml/runs" \
-    -f branch="$branch" -f event=push -f head_sha="$commit" -f status=success -F per_page=1 |
-    jq -e --arg commit "$commit" 'any(.workflow_runs[]; .head_sha == $commit and .conclusion == "success")' \
-      > /dev/null || fail "No successful push CI for $commit on $branch."
-}
-
-require_main_commit() {
+require_main_history() {
   [[ $1 =~ ^$sha_pattern$ ]] || fail 'Expected a full commit SHA.'
   gh api "$repo/compare/$1...main" --jq '.status' | grep -Ex 'ahead|identical' > /dev/null ||
     fail 'Commit is not in main.'
-  require_branch_ci main "$1"
 }
 
-deployment_records() {
-  gh api --paginate --method GET "$repo/deployments" \
-    -f environment="$1" -f task=acadflow-web-image -F per_page=100 "${@:2}" |
-    jq -rs 'add // [] | sort_by(.created_at, .id) | reverse | .[] |
-      select(.creator.login == "github-actions[bot]") |
-      [.id, .sha, ((.payload | if type == "string" then fromjson? else . end).digest // "")] | @tsv'
+require_main_commit() {
+  require_main_history "$1"
+  gh api --paginate --method GET "$repo/actions/workflows/ci.yml/runs" \
+    -f branch=main -f head_sha="$1" -f status=success -F per_page=100 |
+    jq -es --arg commit "$1" 'any(.[].workflow_runs[]; .head_sha == $commit and
+      .conclusion == "success" and (.event == "push" or .event == "workflow_dispatch"))' \
+    > /dev/null || fail "No successful CI for $1 on main."
 }
 
-deployment_succeeded() {
-  gh api --paginate "$repo/deployments/$1/statuses" |
-    jq -es 'any(.[][]; .state == "success")' > /dev/null
-}
-
-require_previous_deploy() {
-  local target=$1 records id sha recorded_digest
-  records=$(deployment_records "$target" -f sha="$revision")
-  while IFS=$'\t' read -r id sha recorded_digest; do
-    [[ $id =~ ^[0-9]+$ && $sha == "$revision" && $recorded_digest == "$digest" ]] || continue
-    if deployment_succeeded "$id"; then return 0; fi
-  done <<< "$records"
-  fail "No successful $target deployment for $revision@$digest."
-}
-
-find_deployed_candidate() {
-  local target=$1 wanted_revision=${2:-} records id sha recorded_digest
-  local -a filters=()
-  if [[ -n $wanted_revision ]]; then filters=(-f "sha=$wanted_revision"); fi
-  records=$(deployment_records "$target" "${filters[@]}") || return 1
-  while IFS=$'\t' read -r id sha recorded_digest; do
-    [[ $id =~ ^[0-9]+$ && $sha =~ ^$sha_pattern$ && $recorded_digest =~ ^$digest_pattern$ ]] || continue
-    [[ -z $wanted_revision || $sha == "$wanted_revision" ]] || continue
-    if deployment_succeeded "$id"; then
-      printf '%s@%s\n' "$sha" "$recorded_digest"
-      return 0
-    fi
-  done <<< "$records"
-  return 0
+inspect_image() {
+  local descriptor
+  if ! descriptor=$(docker buildx imagetools inspect "$image:$1" --format '{{json .Manifest}}' 2>&1); then
+    if grep -Eiq 'manifest unknown|manifest_unknown|: not found$' <<< "$descriptor"; then return 0; fi
+    printf '%s\n' "$descriptor" >&2
+    return 1
+  fi
+  jq -er --arg pattern "^$digest_pattern$" '.digest | select(test($pattern))' <<< "$descriptor"
 }
 
 release_metadata() {
@@ -96,116 +78,118 @@ tag_object() {
 }
 
 require_tag() {
-  local tag=$1 commit=$2 object
+  local tag=$1 commit=$2 object object_sha object_type
   object=$(tag_object "$tag")
-  if [[ -z $object ]] || ! jq -e --arg commit "$commit" '.type == "commit" and .sha == $commit' \
-    <<< "$object" > /dev/null; then
-    fail "Tag $tag does not point to $commit."
+  [[ -n $object ]] || fail "Missing tag $tag."
+  object_type=$(jq -er '.type' <<< "$object")
+  object_sha=$(jq -er '.sha' <<< "$object")
+  if [[ $object_type == tag ]]; then
+    [[ $object_sha =~ ^$sha_pattern$ ]] || fail 'Invalid tag object SHA.'
+    object=$(gh api "$repo/git/tags/$object_sha" --jq '.object')
   fi
+  jq -e --arg commit "$commit" '.type == "commit" and .sha == $commit' <<< "$object" > /dev/null ||
+    fail "Tag $tag does not point to $commit."
 }
 
 create_release() {
-  local version=$1 candidate=$2 commit= object metadata existing notes id saved_candidate
-  validate_version "$version"
+  local tag timestamp notes object metadata existing remote tip
+  tag=$(version_tag "$1")
+  require_main_commit "${GITHUB_SHA:?}"
+  [[ $(git rev-parse HEAD) == "$GITHUB_SHA" ]] || fail 'Release checkout differs from this run commit.'
   existing=$(gh api --paginate "$repo/releases?per_page=100" |
-    jq -c --arg version "$version" '.[] | select(.tag_name == $version)')
-  object=$(tag_object "$version")
-  if [[ -n $object ]]; then
-    commit=$(jq -er 'select(.type == "commit") | .sha' <<< "$object") ||
-      fail "Tag $version does not point directly to a commit."
-    [[ $commit =~ ^$sha_pattern$ ]] || fail 'Invalid tag commit.'
+    jq -c --arg tag "$tag" '.[] | select(.tag_name == $tag)')
+  object=$(tag_object "$tag")
+  timestamp=$(gh api "$repo/actions/runs/${GITHUB_RUN_ID:?}" --jq '.created_at')
+  [[ $timestamp =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]] ||
+    fail 'Invalid release run timestamp.'
+  notes="$RUNNER_TEMP/release-notes.md"
+  node .github/scripts/prepare-release.mjs "${tag#v}" "${timestamp%%T*}" > "$notes"
+  [[ $(git diff --name-only) == $'CHANGELOG.md\npackage.json' ]] ||
+    fail 'Release preparation changed unexpected files.'
+  export GIT_AUTHOR_NAME='github-actions[bot]' GIT_COMMITTER_NAME='github-actions[bot]'
+  export GIT_AUTHOR_EMAIL='41898282+github-actions[bot]@users.noreply.github.com'
+  export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+  export GIT_AUTHOR_DATE="$timestamp" GIT_COMMITTER_DATE="$timestamp"
+  git add -- CHANGELOG.md package.json
+  git -c commit.gpgsign=false commit -m "chore(release): $tag" >&2
+  revision=$(git rev-parse HEAD)
+  if [[ -n $object ]]; then require_tag "$tag" "$revision"; fi
+  if [[ -n $existing && -z $object ]]; then fail "Release $tag exists without its tag."; fi
+
+  remote=$(git ls-remote --exit-code origin refs/heads/main)
+  tip=${remote%%$'\t'*}
+  if [[ -z $object && $tip != "$GITHUB_SHA" ]]; then fail 'main advanced; start a new release run.'; fi
+
+  digest=$(inspect_image "release-$revision")
+  if [[ -z $digest ]]; then
+    [[ -z $object ]] || fail 'Published release image is missing; restore it without moving the tag.'
+    digest=$(bash .github/scripts/publish-image.sh "release-$revision")
   fi
-  if [[ -n $existing ]]; then
-    jq -e '.prerelease == false' <<< "$existing" > /dev/null ||
-      fail "Release $version already exists as a prerelease."
-    metadata=$(release_metadata <<< "$existing")
-    saved_candidate=$(jq -er '.candidate' <<< "$metadata")
-    [[ -z $candidate || $candidate == "$saved_candidate" ]] ||
-      fail "Release $version already has a different candidate."
-    candidate=$saved_candidate
-    commit=$(jq -er '.commit' <<< "$metadata")
-    require_tag "$version" "$commit"
-    id=$(jq -er '.id' <<< "$existing")
-  fi
-  if [[ -z $candidate ]]; then
-    candidate=$(find_deployed_candidate staging "$commit")
-    [[ -n $candidate ]] || fail 'No successful staging deployment found. Deploy a snapshot to staging first.'
-  fi
-  parse_candidate "$candidate"
-  if [[ -z $commit ]]; then commit=$revision; fi
-  require_main_commit "$commit"
-  verify_candidate
-  [[ $(commit_tree "$commit") == "$tree" ]] || fail 'Candidate tree differs from the release commit.'
-  require_previous_deploy staging
-  metadata=$(jq -cn --arg candidate "$revision@$digest" --arg commit "$commit" \
+  verify_candidate "$(git rev-parse 'HEAD^{tree}')" create-release
+  metadata=$(jq -cn --arg candidate "$revision@$digest" --arg commit "$revision" \
     '{candidate: $candidate, commit: $commit}')
-  if [[ -z $object ]]; then
-    gh api --method POST "$repo/git/refs" -f ref="refs/tags/$version" -f sha="$commit" > /dev/null
-  fi
-  require_tag "$version" "$commit"
-  if [[ -z $existing ]]; then
-    # shellcheck disable=SC2016
-    printf -v notes 'Image: `%s@%s`\n\nCandidate: `%s`\n\n<!-- acadflow-image: %s -->' \
-      "$image" "$digest" "$revision" "$metadata"
-    id=$(gh api --method POST "$repo/releases" -f tag_name="$version" -f name="$version" \
-      -f body="$notes" -F draft=true --jq '.id')
-  elif jq -e '.draft == false' <<< "$existing" > /dev/null; then
-    printf 'Release %s is already published.\n' "$version"
+  if [[ -n $existing ]]; then
+    [[ $(release_metadata <<< "$existing") == "$metadata" ]] ||
+      fail "Release $tag already has different metadata."
+    printf 'Release %s is already published.\n' "$tag"
     return
   fi
-  gh api --method PATCH "$repo/releases/$id" -F draft=false --jq .html_url
+  if [[ -z $object ]]; then
+    git -c tag.gpgsign=false tag -a "$tag" -m "Release $tag"
+    git push --atomic origin HEAD:refs/heads/main "refs/tags/$tag:refs/tags/$tag"
+  fi
+  # GITHUB_TOKEN pushes do not trigger CI. Dispatch it for the new main commit.
+  remote=$(git ls-remote --exit-code origin refs/heads/main)
+  if [[ ${remote%%$'\t'*} == "$revision" ]]; then gh workflow run ci.yml --ref main; fi
+  printf '\nImage: `%s@%s`\n\n<!-- acadflow-image: %s -->\n' "$image" "$digest" "$metadata" >> "$notes"
+  gh release create "$tag" --verify-tag --title "$tag" --notes-file "$notes"
 }
 
 resolve_snapshot() {
-  local target=$1 commit=$2 candidate
+  local target=$1 commit=$2
   case "$target" in development | staging) ;; *) fail 'Unknown snapshot environment.' ;; esac
   commit=${commit:-${GITHUB_SHA:?}}
   require_main_commit "$commit"
-  candidate=$(find_deployed_candidate development "$commit")
-  if [[ -z $candidate ]]; then
-    [[ $target == development ]] || fail 'No successful development deployment matches this commit. Deploy to development first.'
-    revision=$commit
-    digest=
+  revision=$commit
+  digest=$(inspect_image "snapshot-$revision")
+  if [[ -n $digest ]]; then
+    verify_candidate '' deploy-snapshot
   else
-    parse_candidate "$candidate"
-    verify_candidate
+    digest=$(inspect_image "release-$revision")
+    if [[ -n $digest ]]; then verify_candidate '' create-release; fi
   fi
   printf 'revision=%s\ndigest=%s\n' "$revision" "$digest" >> "${GITHUB_OUTPUT:?}"
   printf 'Source: main at %s\n' "$commit" >> "${GITHUB_STEP_SUMMARY:?}"
 }
 
 resolve_deploy() {
-  local target=$1 version=$2 release metadata commit
+  local target=$1 version=$2 release metadata commit tag
   case $target in
-    development)
+    development | staging)
       parse_candidate "$version"
       require_main_commit "$revision"
-      verify_candidate
-      ;;
-    staging)
-      parse_candidate "$version"
-      require_main_commit "$revision"
-      verify_candidate
-      require_previous_deploy development
+      verify_candidate '' deploy-snapshot create-release publish-snapshot
       ;;
     production)
-      validate_version "$version"
+      tag=$(version_tag "$version")
       gh api "$repo/environments/production" |
         jq -e 'any(.protection_rules[]?; .type == "required_reviewers" and
           .prevent_self_review == true and (.reviewers | length) > 0)' > /dev/null ||
         fail 'Configure production required reviewers with self-review disabled.'
-      release=$(gh api "$repo/releases/tags/$version")
+      release=$(gh api "$repo/releases/tags/$tag")
       jq -e '.draft == false and .prerelease == false' <<< "$release" > /dev/null ||
         fail 'Expected a published stable release.'
       metadata=$(release_metadata <<< "$release")
       parse_candidate "$(jq -er '.candidate' <<< "$metadata")"
       commit=$(jq -er '.commit' <<< "$metadata")
       [[ $commit =~ ^$sha_pattern$ ]] || fail 'Invalid release commit.'
-      require_tag "$version" "$commit"
-      require_main_commit "$commit"
-      verify_candidate
-      [[ $(commit_tree "$commit") == "$tree" ]] || fail 'Candidate tree differs from the release commit.'
-      require_previous_deploy staging
+      require_tag "$tag" "$commit"
+      require_main_history "$commit"
+      local release_tree
+      release_tree=$(commit_tree "$commit")
+      [[ $(commit_tree "$revision") == "$release_tree" ]] || fail 'Candidate tree differs from the release commit.'
+      verify_candidate "$release_tree" create-release deploy-snapshot publish-snapshot
+      printf 'version=%s\n' "$tag" >> "${GITHUB_OUTPUT:?}"
       ;;
     *) fail 'Unknown environment.' ;;
   esac
@@ -216,7 +200,7 @@ resolve_deploy() {
 }
 
 case ${1:-} in
-  release) [[ $# == 3 ]] || fail 'Expected version and optional candidate.'; create_release "$2" "$3" ;;
+  release) [[ $# == 2 ]] || fail 'Expected version.'; create_release "$2" ;;
   resolve) [[ $# == 3 ]] || fail 'Expected environment and version/candidate.'; resolve_deploy "$2" "$3" ;;
   snapshot) [[ $# == 3 ]] || fail 'Expected environment and optional commit.'; resolve_snapshot "$2" "$3" ;;
   *) fail 'Unknown operation.' ;;
