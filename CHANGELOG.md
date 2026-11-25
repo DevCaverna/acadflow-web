@@ -4,6 +4,8 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-25
+
 ### Adicionado
 
 - Páginas de erro 403, 404, 500 e sem conexão nas consultas principais, com recuperação automática ao voltar a conexão.
