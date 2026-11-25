@@ -4,6 +4,7 @@ import { NotFoundPage } from '@/app/router/NotFoundPage';
 import { RequireAuth } from '@/app/router/RequireAuth';
 import { RouteErrorBoundary } from '@/app/router/RouteErrorBoundary';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
+import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { Skeleton } from '@/shared/components/Skeleton';
 
 const DisciplinesPage = lazy(() =>
@@ -32,6 +33,7 @@ export const routes: RouteObject[] = [
     errorElement: <RouteErrorBoundary />,
     children: [
       { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
       {
         element: <RequireAuth />,
         children: [

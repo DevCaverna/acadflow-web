@@ -1,5 +1,6 @@
 import {
   type LoginInput,
+  type RegistrationInput,
   type Session,
   sessionSchema,
   type User,
@@ -16,6 +17,10 @@ export class AuthService {
 
   login(body: LoginInput): Promise<Session> {
     return this.api.post({ url: LOGIN_PATH, schema: sessionSchema, body });
+  }
+
+  register(body: RegistrationInput): Promise<Session> {
+    return this.api.post({ url: '/auth/register', schema: sessionSchema, body });
   }
 
   me(): Promise<User> {

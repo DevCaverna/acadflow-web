@@ -30,6 +30,6 @@ Este documento mapeia as telas e fluxos especificados em [acadflow-design](https
 ## 2. Adaptações Intencionais e Lacunas Conhecidas
 
 1. **Rota raiz `/` redireciona para `/disciplines`:** o `acadflow-design` v1.2 adicionou telas separadas de `Landing`, `ProfHome`/`AlunoHome` e `ProfPainel`/`AlunoPainel`, mas a aplicação web direciona usuários autenticados diretamente para `/disciplines` (fluxo focado nas tarefas principais de disciplinas, atividades e notas).
-2. **Cadastro público (`Cadastro` / `POST /auth/register`):** permanece fora do escopo atual tanto na Web quanto na API; contas são provisionadas por seed ou CLI `user:create`.
+2. **Cadastro público (`/register`, `POST /auth/register`):** adapta o protótipo `Cadastro` para escolher entre professor e aluno. O perfil é autodeclarado, sem verificação de e-mail.
 3. **Exclusão de atividade com notas (`Feedback.dc.html` vs regra vigente):** o contrato vigente (design v1.3, Web e API) **bloqueia** com `409 CONFLICT` a exclusão de atividades que tenham notas ou anexos; o diálogo de confirmação em cascata presente em `Feedback.dc.html` é um resquício da v1.1 documentado para revisão no repositório de design.
 4. **`DELETE /activities/:id/grades/:studentId`:** consta como rota opcional nos contratos da API, mas não foi implementado na API nem exposto na grade da Web (a Web impede apagar uma nota já salva).

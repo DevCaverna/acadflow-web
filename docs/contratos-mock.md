@@ -42,6 +42,7 @@ type ApiError = { statusCode: number; code: string; message: string };
 | -------- | ----------------------------------- | ------------------------------------------ | ---------------------------------------- | -------------------------------- |
 | `GET`    | `/health`                           | Público                                    | —                                        | Estado da API e do banco         |
 | `POST`   | `/auth/login`                       | Público                                    | `{ email, password }`                    | `200 Session`                    |
+| `POST`   | `/auth/register`                    | Público                                    | `{ name, email, password, role }`        | `201 Session`                    |
 | `GET`    | `/auth/me`                          | Autenticado                                | —                                        | `200 User`                       |
 | `GET`    | `/disciplines`                      | Professor: as suas; aluno: as matriculadas | —                                        | `200 Listing<Discipline>`        |
 | `POST`   | `/disciplines`                      | Professor                                  | `{ code, name, semester, description? }` | `201 Discipline`                 |
