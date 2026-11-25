@@ -4,6 +4,8 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-25
+
 ### Adicionado
 
 - Documentação completa: arquitetura com fluxos Mermaid ([docs/arquitetura.md](docs/arquitetura.md)), Design System ([docs/design-system.md](docs/design-system.md)), ADRs (`docs/adr/`), manual do usuário ([docs/manual-do-usuario.md](docs/manual-do-usuario.md)) e matriz de rastreabilidade ([docs/rastreabilidade.md](docs/rastreabilidade.md)).
