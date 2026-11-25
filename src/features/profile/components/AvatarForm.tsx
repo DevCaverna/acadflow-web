@@ -89,7 +89,9 @@ export function AvatarForm({ user }: AvatarFormProps) {
               variant="secondary"
               loading={remove.isPending}
               onClick={() =>
-                remove.mutate(undefined, { onSuccess: () => toastStore.show(t('photoRemoved')) })
+                remove.mutate(undefined, {
+                  onSuccess: () => toastStore.show(t('photoRemoved'), undefined, 'info'),
+                })
               }
             >
               {t('removePhoto')}

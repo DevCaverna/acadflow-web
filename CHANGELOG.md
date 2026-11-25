@@ -4,6 +4,20 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 
 ## [Unreleased]
 
+### Adicionado
+
+- Páginas de erro 403, 404, 500 e sem conexão nas consultas principais, com recuperação automática ao voltar a conexão.
+- Rotas por papel (`/professor` e `/student`), com erro 403 na área de outro papel e redirecionamento dos endereços antigos.
+- Página pública em `/` e páginas iniciais do professor e do aluno.
+- Documento de rotas em [docs/rotas.md](docs/rotas.md).
+- Toasts de erro e informação, aviso de atenção, formatos de skeleton e barra de progresso na troca de página.
+- Alunos, atividades e média da turma nos cards de disciplinas do professor.
+
+### Alterado
+
+- Confirmações usam `alertdialog`.
+- Exclusão bloqueada por dependências mostra só a explicação e a ação "Entendi".
+
 ## [1.1.0] - 2026-11-25
 
 ### Adicionado

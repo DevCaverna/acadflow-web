@@ -4,7 +4,7 @@ import { activityKeys } from '@/features/activities/api/activities.keys';
 import { useCreateActivity } from '@/features/activities/hooks/useActivities';
 import { authKeys } from '@/features/auth/api/auth.keys';
 import { useLogin } from '@/features/auth/hooks/useLogin';
-import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useLogout } from '@/shared/hooks/useLogout';
 import { disciplineKeys } from '@/features/disciplines/api/disciplines.keys';
 import { useCreateDiscipline } from '@/features/disciplines/hooks/useDisciplines';
 import { gradeKeys } from '@/features/grades/api/grades.keys';

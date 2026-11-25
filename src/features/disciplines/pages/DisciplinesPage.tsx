@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import { useAuthUser } from '@/features/auth/hooks/useAuthUser';
 import { DisciplineFormModal } from '@/features/disciplines/components/DisciplineFormModal';
 import { DisciplineList } from '@/features/disciplines/components/DisciplineList';
@@ -11,7 +12,9 @@ export function DisciplinesPage() {
   const { t } = useTranslation('disciplines');
   const { role } = useAuthUser();
   const [filters, setFilters] = useState({ search: '', page: 1 });
-  const [creating, setCreating] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const creating = params.has('new');
+  const setCreating = (open: boolean) => setParams(open ? { new: '1' } : {}, { replace: true });
   const createButton = role === 'PROFESSOR' && (
     <Button icon="plus" onClick={() => setCreating(true)}>
       {t('new')}
@@ -39,6 +42,7 @@ export function DisciplinesPage() {
       <DisciplineList
         search={filters.search.trim()}
         page={filters.page}
+        showStats={role === 'PROFESSOR'}
         emptyAction={createButton}
         onPageChange={(page) => setFilters({ ...filters, page })}
         onClearSearch={() => setFilters({ search: '', page: 1 })}

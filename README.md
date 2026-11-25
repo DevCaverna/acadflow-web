@@ -39,7 +39,8 @@ pnpm dev
 | [Deploy](docs/execucao/deploy.md)                                                          | Releases e deploy (GHCR, Docker/Nginx e VPS)      |
 | [Manual do Usuário](docs/manual-do-usuario.md)                                             | Guia funcional para Professor e Aluno             |
 | [Arquitetura](docs/arquitetura.md)                                                         | Camadas, gestão de estado e fluxos Mermaid        |
-| [Design System](docs/design-system.md)                                                     | Tokens light/dark e catálogo de 17 componentes    |
+| [Rotas](docs/rotas.md)                                                                     | Mapa de rotas, acesso e telas do design sem uso   |
+| [Design System](docs/design-system.md)                                                     | Tokens light/dark e catálogo de componentes       |
 | [Rastreabilidade](docs/rastreabilidade.md)                                                 | Mapa Design × Web × API                           |
 | [ADRs](docs/adr/README.md)                                                                 | Registros de decisões arquiteturais               |
 | [Configuração](docs/configuracao.md)                                                       | Variáveis de ambiente                             |

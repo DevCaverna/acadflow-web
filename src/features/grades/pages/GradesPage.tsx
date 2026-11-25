@@ -24,7 +24,7 @@ export function GradesPage() {
         </h1>
         {isProfessor && <p className="text-sm text-muted">{t('tableHint')}</p>}
       </header>
-      <QueryState query={query}>
+      <QueryState query={query} errorView="page">
         {({ data }) => {
           const selected = data.find(({ id }) => id === params.get('discipline')) ?? data[0];
           if (selected === undefined) {

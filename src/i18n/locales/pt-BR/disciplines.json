@@ -24,5 +24,12 @@
   "count_one": "{{count}} disciplina",
   "count_other": "{{count}} disciplinas",
   "enrollmentHint": "Média: só notas lançadas.",
-  "descriptionPlaceholder": "Ementa resumida"
+  "descriptionPlaceholder": "Ementa resumida",
+  "stats": {
+    "students_one": "aluno",
+    "students_other": "alunos",
+    "activities_one": "atividade",
+    "activities_other": "atividades",
+    "average": "média"
+  }
 }

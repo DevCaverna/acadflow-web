@@ -12,3 +12,11 @@ export function formatDateTime(isoDate: string, language: string, timeZone?: str
     timeZone,
   }).format(new Date(isoDate));
 }
+
+export function formatDate(
+  time: number,
+  language: string,
+  options: Intl.DateTimeFormatOptions,
+): string {
+  return new Intl.DateTimeFormat(language, options).format(time);
+}

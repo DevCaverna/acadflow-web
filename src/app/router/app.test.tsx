@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { onlineManager } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { createMemoryRouter } from 'react-router';
@@ -186,6 +187,68 @@ describe('app', () => {
       expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     });
 
+    it.each([
+      [professor, '/', '/professor'],
+      [student, '/', '/student'],
+      [professor, '/grades?discipline=x', '/professor/grades'],
+      [student, `/disciplines/${id(3)}`, `/student/disciplines/${id(3)}`],
+    ])('redirects to the area of the role', async (user, path, expected) => {
+      accessToken.set('token');
+      setup(user);
+      const router = renderApp(path);
+      await waitFor(() => expect(router.state.location.pathname).toBe(expected));
+    });
+
+    it.each([
+      [student, '/professor/disciplines'],
+      [professor, '/student/grades'],
+    ])('forbids the area of another role', async (user, path) => {
+      accessToken.set('token');
+      const requests = setup(user);
+      renderApp(path);
+      expect(
+        await screen.findByRole('heading', { name: 'Você não tem acesso a esta área' }),
+      ).toBeInTheDocument();
+      expect(requests.some(({ url }) => url === '/disciplines')).toBe(false);
+    });
+
+    it('shows the landing page without a session', async () => {
+      const requests = setup(professor);
+      renderApp('/');
+      expect(
+        await screen.findByRole('heading', { name: 'Organize disciplinas, atividades e notas.' }),
+      ).toBeInTheDocument();
+      expect(requests).toHaveLength(0);
+    });
+
+    it('shows pending grades on the professor home', async () => {
+      accessToken.set('token');
+      setup(professor, {
+        [`get /disciplines/${id(3)}/activities`]: {
+          data: [{ ...activities[0], dueAt: '2020-01-01T10:00:00.000Z' }],
+        },
+      });
+      renderApp('/professor');
+      expect(await screen.findByText('1 sem nota')).toBeInTheDocument();
+      expect(screen.getByText('0 de 1')).toBeInTheDocument();
+    });
+
+    it('shows the deadline and the average on the student home', async () => {
+      accessToken.set('token');
+      const requests = setup(student, {
+        [`get /disciplines/${id(3)}/activities`]: {
+          data: [{ ...activities[0], dueAt: new Date(Date.now() + 2 * 86_400_000).toISOString() }],
+        },
+        [`get /disciplines/${id(3)}/grades/me`]: {
+          data: { grades: [], average: null, status: 'NO_GRADES' },
+        },
+      });
+      renderApp('/student');
+      expect(await screen.findByText('Sem notas')).toBeInTheDocument();
+      expect(screen.getAllByText('Lista 1')).toHaveLength(2);
+      expect(requests.some(({ url }) => url?.endsWith('/grades'))).toBe(false);
+    });
+
     it('shows a page for unknown addresses', () => {
       renderApp('/unknown');
       expect(screen.getByText('Página não encontrada')).toBeInTheDocument();
@@ -231,6 +294,58 @@ describe('app', () => {
       expect(await screen.findByText('Ocorreu um erro')).toBeInTheDocument();
       await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
       expect(await screen.findByText('Nenhuma disciplina ainda')).toBeInTheDocument();
+    });
+
+    it.each([
+      [403, 'FORBIDDEN', 'Você não tem acesso a esta área'],
+      [404, 'NOT_FOUND', 'Página não encontrada'],
+      [500, 'INTERNAL_ERROR', 'Algo deu errado do nosso lado'],
+    ])('shows the error page for status %i', async (status, code, title) => {
+      setup(professor, { [`get /disciplines/${id(3)}`]: error(status, code, 'Falha') });
+      renderApp(`/disciplines/${id(3)}`);
+      expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument();
+    });
+
+    it('signs out from the forbidden page', async () => {
+      setup(professor, { [`get /disciplines/${id(3)}`]: error(403, 'FORBIDDEN', 'Falha') });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Entrar com outra conta' }));
+      expect(await screen.findByRole('heading', { name: 'Entrar' })).toBeInTheDocument();
+      expect(accessToken.get()).toBeNull();
+    });
+
+    it('shows the offline page and recovers when the connection returns', async () => {
+      setup(professor);
+      onlineManager.setOnline(false);
+      try {
+        renderApp('/disciplines');
+        expect(
+          await screen.findByRole('heading', { name: 'Você está sem internet' }),
+        ).toBeInTheDocument();
+        onlineManager.setOnline(true);
+        expect(await screen.findByRole('heading', { name: 'Banco de Dados' })).toBeInTheDocument();
+      } finally {
+        onlineManager.setOnline(true);
+      }
+    });
+
+    it('shows class numbers to professors', async () => {
+      setup(professor, {
+        [`get /disciplines/${id(3)}/grades`]: {
+          data: [
+            {
+              student: { id: id(2), name: 'Ana', email: 'a@example.com' },
+              grades: [],
+              average: 7.5,
+              status: 'APPROVED',
+            },
+          ],
+        },
+      });
+      renderApp('/disciplines');
+      expect(await screen.findByText('7,5')).toBeInTheDocument();
+      expect(screen.getByText('aluno')).toBeInTheDocument();
+      expect(await screen.findByText('atividades')).toBeInTheDocument();
     });
 
     it('searches and moves between pages', async () => {
@@ -304,9 +419,12 @@ describe('app', () => {
       });
       renderApp(`/disciplines/${id(3)}`);
       await userEvent.click(await screen.findByRole('button', { name: 'Excluir: Banco de Dados' }));
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole('alertdialog');
       await userEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
       expect(await screen.findByText('Há dependências')).toBeInTheDocument();
+      expect(within(dialog).queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Entendi' }));
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     });
 
     it('hides writing actions from students', async () => {
@@ -354,7 +472,7 @@ describe('app', () => {
       });
       renderApp(`/disciplines/${id(3)}`);
       await userEvent.click(await screen.findByRole('button', { name: 'Remover matrícula: Ana' }));
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole('alertdialog');
       await userEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
       expect(await screen.findByText('Há notas lançadas')).toBeInTheDocument();
     });
@@ -403,9 +521,9 @@ describe('app', () => {
       await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 
       await userEvent.click(screen.getByRole('button', { name: 'Excluir: Lista 1' }));
-      const dialog = screen.getByRole('dialog');
+      const dialog = screen.getByRole('alertdialog');
       await userEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
-      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
       expect(requests.map(({ method }) => method)).toEqual(
         expect.arrayContaining(['post', 'patch', 'delete']),
       );
@@ -553,6 +671,7 @@ describe('app', () => {
       await userEvent.click(screen.getByRole('button', { name: 'Salvar notas' }));
       expect(await screen.findByText('1 nota não foi salva. Tente novamente.')).toBeInTheDocument();
       expect(input).toHaveValue('7');
+      expect(screen.getByText('Não foi possível salvar')).toBeInTheDocument();
     });
 
     it('filters students but keeps the ones being edited', async () => {
@@ -615,15 +734,17 @@ describe('app', () => {
       expect(screen.getByText('1 alteração não salva')).toBeInTheDocument();
 
       await userEvent.click(screen.getByRole('link', { name: 'Disciplinas' }));
-      const modal = await screen.findByRole('dialog', { name: 'Sair sem salvar notas?' });
+      const modal = await screen.findByRole('alertdialog', { name: 'Sair sem salvar notas?' });
       await userEvent.click(within(modal).getByRole('button', { name: 'Continuar editando' }));
-      expect(router.state.location.pathname).toBe('/grades');
+      expect(router.state.location.pathname).toBe('/professor/grades');
       expect(second).toHaveValue('9');
 
       await userEvent.click(screen.getByRole('link', { name: 'Disciplinas' }));
-      const confirmModal = await screen.findByRole('dialog', { name: 'Sair sem salvar notas?' });
+      const confirmModal = await screen.findByRole('alertdialog', {
+        name: 'Sair sem salvar notas?',
+      });
       await userEvent.click(within(confirmModal).getByRole('button', { name: 'Sair sem salvar' }));
-      await waitFor(() => expect(router.state.location.pathname).toBe('/disciplines'));
+      await waitFor(() => expect(router.state.location.pathname).toBe('/professor/disciplines'));
     });
 
     it('shows partial average and missing grades to the student', async () => {

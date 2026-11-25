@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
 import { ActivityList } from '@/features/activities/components/ActivityList';
+import { useAreaRoutes } from '@/features/auth/hooks/useAreaRoutes';
 import { useAuthUser } from '@/features/auth/hooks/useAuthUser';
 import { DisciplineFormModal } from '@/features/disciplines/components/DisciplineFormModal';
 import { StudentList } from '@/features/disciplines/components/StudentList';
@@ -19,16 +20,17 @@ export function DisciplinePage() {
   const { disciplineId = '' } = useParams();
   const navigate = useNavigate();
   const isProfessor = useAuthUser().role === 'PROFESSOR';
+  const area = useAreaRoutes();
   const query = useDiscipline(disciplineId);
   const remove = useRemoveDiscipline();
   const [dialog, setDialog] = useState<'edit' | 'remove' | null>(null);
 
   return (
-    <QueryState query={query}>
+    <QueryState query={query} errorView="page">
       {(discipline) => (
         <>
           <Breadcrumb
-            links={[{ to: '/disciplines', label: t('title') }]}
+            links={[{ to: area.disciplines, label: t('title') }]}
             current={discipline.name}
           />
           <header className="flex flex-wrap items-end justify-between gap-4">
@@ -49,7 +51,7 @@ export function DisciplinePage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
-                to={`/grades?discipline=${discipline.id}`}
+                to={area.disciplineGrades(discipline.id)}
                 className="inline-flex h-10 items-center rounded-button border border-field bg-surface px-4.5 text-sm font-semibold hover:bg-canvas"
               >
                 {isProfessor ? t('grades:entryTitle') : t('grades:mineTitle')}
@@ -92,8 +94,8 @@ export function DisciplinePage() {
               onConfirm={() =>
                 remove.mutate(discipline.id, {
                   onSuccess: () => {
-                    toastStore.show(t('removed'), discipline.name);
-                    void navigate('/disciplines');
+                    toastStore.show(t('removed'), discipline.name, 'info');
+                    void navigate(area.disciplines);
                   },
                 })
               }

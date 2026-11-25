@@ -45,7 +45,7 @@ export function Button({
       className={cn(
         'inline-flex h-11 items-center justify-center gap-2 rounded-button px-4.5 text-[15px] font-semibold',
         VARIANTS[variant],
-        disabled && 'bg-line text-muted',
+        disabled && (variant === 'secondary' ? 'border-line text-muted' : 'bg-line text-muted'),
         loading && 'opacity-85',
         className,
       )}

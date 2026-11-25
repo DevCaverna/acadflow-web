@@ -7,6 +7,13 @@ type ModalProps = {
   title: string;
   /** Texto abaixo do título. */
   subtitle?: string;
+  /**
+   * Papel da janela; `alertdialog` para confirmações.
+   * @default 'dialog'
+   */
+  role?: 'dialog' | 'alertdialog';
+  /** Id do texto que descreve a janela. */
+  describedBy?: string;
   /** Conteúdo da janela. */
   children: ReactNode;
   /** Chamado ao fechar. */
@@ -14,7 +21,14 @@ type ModalProps = {
 };
 
 /** Janela modal nativa, com foco preso e fechamento por Esc. */
-export function Modal({ title, subtitle, children, onClose }: ModalProps) {
+export function Modal({
+  title,
+  subtitle,
+  role = 'dialog',
+  describedBy,
+  children,
+  onClose,
+}: ModalProps) {
   const { t } = useTranslation();
   const titleId = useId();
   const ref = useRef<HTMLDialogElement>(null);
@@ -28,6 +42,8 @@ export function Modal({ title, subtitle, children, onClose }: ModalProps) {
   return (
     <dialog
       ref={ref}
+      role={role}
+      aria-describedby={describedBy}
       aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();

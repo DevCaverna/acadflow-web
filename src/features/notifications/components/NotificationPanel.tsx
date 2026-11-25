@@ -7,6 +7,7 @@ import { Alert } from '@/shared/components/Alert';
 import { Button } from '@/shared/components/Button';
 import { Icon } from '@/shared/components/Icon';
 import { Skeleton } from '@/shared/components/Skeleton';
+import { getAreaRoutes } from '@/shared/config/routes';
 import { cn } from '@/shared/lib/cn';
 import { formatDateTime } from '@/shared/lib/format';
 
@@ -21,6 +22,7 @@ type NotificationPanelProps = {
 /** Avisos derivados de prazos e notas. */
 export function NotificationPanel({ isStudent, onNavigate }: NotificationPanelProps) {
   const { t, i18n } = useTranslation(['notifications', 'common']);
+  const area = getAreaRoutes(isStudent ? 'ALUNO' : 'PROFESSOR');
   const [now] = useState(() => Date.now());
   const { notices, isPending, error, refetch } = useNotices({ isStudent, now });
 
@@ -35,7 +37,7 @@ export function NotificationPanel({ isStudent, onNavigate }: NotificationPanelPr
         </div>
       );
     }
-    if (isPending) return <Skeleton />;
+    if (isPending) return <Skeleton variant="list" />;
     if (notices.length === 0) {
       return (
         <div className="flex flex-col items-center gap-2 px-6 py-8 text-center">
@@ -52,8 +54,8 @@ export function NotificationPanel({ isStudent, onNavigate }: NotificationPanelPr
             <Link
               to={
                 notice.type === 'grade'
-                  ? `/grades?discipline=${notice.disciplineId}`
-                  : `/disciplines/${notice.disciplineId}`
+                  ? area.disciplineGrades(notice.disciplineId)
+                  : area.discipline(notice.disciplineId)
               }
               onClick={onNavigate}
               className="flex gap-3 border-b border-subtle px-4.5 py-3.5 hover:bg-canvas"

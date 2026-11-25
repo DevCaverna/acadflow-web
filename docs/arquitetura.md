@@ -16,18 +16,20 @@ src/
     router/                      # router.tsx, routes.tsx, RequireAuth, AppLayout, NotFoundPage
   shared/
     api/                         # ApiService singleton, access-token store, api-error, listing.schema
-    components/                  # 17 componentes base reutilizáveis + arquivos de teste
+    components/                  # componentes base reutilizáveis + arquivos de teste
     config/time.constants.ts     # Constantes de duração (QUERY_STALE_MS, REQUEST_TIMEOUT_MS, DEFAULT_TOAST_MS)
     lib/                         # cn, file (AVATAR_RULES/ATTACHMENT_RULES), format, theme, toast
   features/
     auth/                        # LoginPage, SessionExpiredDialog, useCurrentUser, useLogin, useLogout
+    home/                        # HomePage, ProfessorHome, StudentHome
+    landing/                     # LandingPage (pública)
     disciplines/                 # DisciplinesPage, DisciplinePage, DisciplineFormModal, DisciplineList, StudentList
     enrollments/                 # EnrollModal, hooks/services de matrícula e busca de candidatos
     activities/                  # ActivityList, ActivityFormModal, AttachmentsModal, DueBadge, GradedProgress
     grades/                      # GradesPage, GradeEntry (professor), MyGrades (aluno), GradeStatusBadge, parseGrade
     notifications/               # NotificationBell, NotificationPanel, useNotices (avisos derivados no cliente)
     profile/                     # ProfilePage, AvatarForm, ProfileForm, PasswordForm
-  i18n/                          # Config i18next e locales pt-BR (padrão) e en (9 namespaces)
+  i18n/                          # Config i18next e locales pt-BR (padrão) e en (11 namespaces)
   styles/index.css               # Tailwind CSS v4 @theme + variáveis do tema escuro [data-theme='dark']
 test/                            # setup.ts, mock-api.ts (adapter Axios), query-wrapper.tsx, render-app.tsx
 ```
@@ -72,7 +74,7 @@ sequenceDiagram
     User->>Web: Preenche e-mail e senha em /login
     Web->>API: POST /auth/login
     API-->>Web: 200 Session (accessToken + user)
-    Web->>Web: Salva token em sessionStorage e redireciona para /disciplines
+    Web->>Web: Salva token em sessionStorage e redireciona para a área do papel (docs/rotas.md)
     User->>Web: Navega / realiza mutação após expiração do JWT
     Web->>API: Requisição com Bearer expirado
     API-->>Web: 401 UNAUTHORIZED

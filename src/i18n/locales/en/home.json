@@ -1,0 +1,53 @@
+{
+  "greeting": {
+    "morning": "Good morning, {{name}}",
+    "afternoon": "Good afternoon, {{name}}",
+    "evening": "Good evening, {{name}}"
+  },
+  "pendingGrades_one": "{{count}} grade to enter",
+  "pendingGrades_other": "{{count}} grades to enter",
+  "deadlines_one": "{{count}} deadline in the next 7 days",
+  "deadlines_other": "{{count}} deadlines in the next 7 days",
+  "deadlines14_one": "{{count}} deadline in the next 14 days",
+  "deadlines14_other": "{{count}} deadlines in the next 14 days",
+  "newGrades_one": "{{count}} new grade",
+  "newGrades_other": "{{count}} new grades",
+  "shortcuts": {
+    "label": "Shortcuts",
+    "grades": {
+      "title": "Enter grades",
+      "text": "By activity and student"
+    },
+    "activity": {
+      "title": "New activity",
+      "text": "Choose the course"
+    },
+    "discipline": {
+      "title": "New course",
+      "text": "Code, name and semester"
+    }
+  },
+  "continue": "Continue where you left off",
+  "withoutGrade_one": "{{count}} without grade",
+  "withoutGrade_other": "{{count}} without grade",
+  "closedAt": "{{discipline}} · closed on {{date}}",
+  "gradedLabel": "Grades entered",
+  "gradedOf": "{{graded}} of {{total}}",
+  "continueAction": "Continue grading",
+  "nothingPending": "No grades pending in closed activities.",
+  "week": "Next 7 days",
+  "next14": "Next 14 days",
+  "noDeadlines": "No deadlines in this period.",
+  "classes": "My classes",
+  "students_one": "{{count}} student",
+  "students_other": "{{count}} students",
+  "nextDeadline": "Next deadline",
+  "dueAt": "{{discipline}} · until {{date}}",
+  "seeDiscipline": "See course",
+  "newGrade": "New grade",
+  "noNewGrades": "No grades in the last 7 days.",
+  "allGrades": "See all grades",
+  "myDisciplines": "My courses",
+  "partialHint": "Partial averages only consider graded activities.",
+  "noEnrollments": "You are not enrolled in any course yet."
+}

@@ -14,6 +14,7 @@ import { Button } from '@/shared/components/Button';
 import { Field } from '@/shared/components/Field';
 import { Icon } from '@/shared/components/Icon';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
+import { ROUTES } from '@/shared/config/routes';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
 
 /** Tela de login. */
@@ -27,7 +28,7 @@ export function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  if (token !== null) return <Navigate to="/" replace />;
+  if (token !== null) return <Navigate to={ROUTES.root} replace />;
 
   const passwordLabel = passwordVisible ? t('hidePassword') : t('showPassword');
   return (
@@ -74,7 +75,7 @@ export function LoginPage() {
         <Button type="submit" loading={login.isPending} className="h-12 text-base">
           {t('signIn')}
         </Button>
-        <Link to="/register" className="self-center font-semibold text-primary underline">
+        <Link to={ROUTES.register} className="self-center font-semibold text-primary underline">
           {t('register.title')}
         </Link>
         <div className="flex items-center gap-2">

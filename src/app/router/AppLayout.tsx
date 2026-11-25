@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
-import { useLogout } from '@/features/auth/hooks/useLogout';
+import { getAreaRoutes, ROUTES } from '@/shared/config/routes';
+import { useLogout } from '@/shared/hooks/useLogout';
 import type { User } from '@/features/auth/schemas/auth.schema';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { Avatar } from '@/shared/components/Avatar';
@@ -9,6 +10,7 @@ import { IconButton } from '@/shared/components/IconButton';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
 import { Toaster } from '@/shared/components/Toaster';
+import { TopProgress } from '@/shared/components/TopProgress';
 import { cn } from '@/shared/lib/cn';
 
 /** Props de {@link AppLayout}. */
@@ -21,14 +23,16 @@ type AppLayoutProps = {
 export function AppLayout({ user }: AppLayoutProps) {
   const { t } = useTranslation(['common', 'disciplines', 'grades', 'profile']);
   const logout = useLogout();
+  const area = getAreaRoutes(user.role);
   const items: Array<{ to: string; icon: IconName; label: string }> = [
-    { to: '/disciplines', icon: 'disciplines', label: t('disciplines:title') },
+    { to: area.home, icon: 'home', label: t('home') },
+    { to: area.disciplines, icon: 'disciplines', label: t('disciplines:title') },
     {
-      to: '/grades',
+      to: area.grades,
       icon: 'grades',
       label: user.role === 'PROFESSOR' ? t('grades:entryTitle') : t('grades:mineTitle'),
     },
-    { to: '/profile', icon: 'profile', label: t('profile:title') },
+    { to: ROUTES.profile, icon: 'profile', label: t('profile:title') },
   ];
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -45,6 +49,7 @@ export function AppLayout({ user }: AppLayoutProps) {
             <NavLink
               key={to}
               to={to}
+              end={to === area.home}
               className={({ isActive }) =>
                 cn(
                   'flex h-11 items-center gap-3 rounded-button px-3 text-[15px] font-medium text-muted hover:bg-canvas',
@@ -78,6 +83,7 @@ export function AppLayout({ user }: AppLayoutProps) {
           <Outlet context={user} />
         </div>
       </main>
+      <TopProgress />
       <Toaster />
     </div>
   );

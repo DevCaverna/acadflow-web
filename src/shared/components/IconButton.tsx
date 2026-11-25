@@ -19,8 +19,9 @@ export function IconButton({ icon, label, className, ...props }: IconButtonProps
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex size-10 items-center justify-center rounded-button border border-line bg-surface text-muted hover:bg-canvas',
+        'inline-flex size-10 items-center justify-center rounded-button border border-line bg-surface text-muted enabled:hover:border-field enabled:hover:bg-canvas',
         className,
+        props.disabled && 'text-field',
       )}
     >
       <Icon name={icon} className="size-4.5" />

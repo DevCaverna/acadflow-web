@@ -25,19 +25,6 @@
     "PROFESSOR": "Professor",
     "ALUNO": "Aluno"
   },
-  "notFound": {
-    "label": "Erro 404",
-    "title": "Página não encontrada",
-    "text": "O endereço que você tentou abrir não existe ou foi movido.",
-    "back": "Voltar ao início"
-  },
-  "routeError": {
-    "label": "Erro inesperado",
-    "title": "Algo deu errado nesta página",
-    "text": "Não foi possível exibir esta tela agora. Você pode recarregar ou voltar ao início.",
-    "reload": "Recarregar página",
-    "back": "Voltar ao início"
-  },
   "optional": "(opcional)",
   "areas": {
     "PROFESSOR": "Área do professor",
@@ -48,5 +35,42 @@
   "theme": {
     "dark": "Usar tema escuro",
     "light": "Usar tema claro"
-  }
+  },
+  "errorPages": {
+    "home": "Voltar ao início",
+    "login": "Voltar ao login",
+    "otherAccount": "Entrar com outra conta",
+    "reconnect": "Tentar reconectar",
+    "reload": "Recarregar página",
+    "path": "Caminho: {{path}}",
+    "notFound": {
+      "label": "Erro 404",
+      "title": "Página não encontrada",
+      "text": "O endereço que você tentou abrir não existe ou foi movido."
+    },
+    "forbidden": {
+      "label": "Erro 403 · acesso restrito",
+      "title": "Você não tem acesso a esta área",
+      "text": "Seu perfil não tem permissão para ver este conteúdo. Se acha que isso é um engano, fale com a coordenação."
+    },
+    "server": {
+      "label": "Erro no servidor",
+      "title": "Algo deu errado do nosso lado",
+      "text": "O servidor não conseguiu concluir a solicitação. Tente novamente em alguns instantes."
+    },
+    "offline": {
+      "label": "Sem conexão",
+      "title": "Você está sem internet",
+      "text": "Verifique o Wi-Fi ou os dados móveis. Assim que a conexão voltar, recarregamos a página para você."
+    },
+    "unexpected": {
+      "label": "Erro inesperado",
+      "title": "Algo deu errado nesta página",
+      "text": "Não foi possível exibir esta tela agora. Você pode recarregar ou voltar ao início."
+    },
+    "roleDetail": "Perfil exigido: {{required}} · seu perfil: {{current}}"
+  },
+  "understood": "Entendi",
+  "blockedTitle": "Não é possível excluir",
+  "home": "Início"
 }

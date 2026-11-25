@@ -12,6 +12,7 @@ import { Alert } from '@/shared/components/Alert';
 import { Button } from '@/shared/components/Button';
 import { Field } from '@/shared/components/Field';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
+import { ROUTES } from '@/shared/config/routes';
 import { ThemeToggle } from '@/shared/components/ThemeToggle';
 
 const ROLES = ['ALUNO', 'PROFESSOR'] as const;
@@ -30,7 +31,7 @@ export function RegisterPage() {
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
 
-  if (token !== null) return <Navigate to="/" replace />;
+  if (token !== null) return <Navigate to={ROUTES.root} replace />;
 
   return (
     <AuthLayout>
@@ -104,7 +105,7 @@ export function RegisterPage() {
         <Button type="submit" loading={registration.isPending} className="h-12 text-base">
           {t('register.title')}
         </Button>
-        <Link to="/login" className="self-center font-semibold text-primary underline">
+        <Link to={ROUTES.login} className="self-center font-semibold text-primary underline">
           {t('register.backToLogin')}
         </Link>
         <div className="flex items-center gap-2">
