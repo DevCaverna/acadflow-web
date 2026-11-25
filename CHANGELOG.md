@@ -12,11 +12,16 @@ Todas as mudanças notáveis do **AcadFlow Web** são documentadas neste arquivo
 - Documento de rotas em [docs/rotas.md](docs/rotas.md).
 - Toasts de erro e informação, aviso de atenção, formatos de skeleton e barra de progresso na troca de página.
 - Alunos, atividades e média da turma nos cards de disciplinas do professor.
+- Item "Início" no menu lateral.
+- Toast de erro quando parte das notas não é salva, mantendo na tabela as que falharam.
 
 ### Alterado
 
 - Confirmações usam `alertdialog`.
 - Exclusão bloqueada por dependências mostra só a explicação e a ação "Entendi".
+- Aviso de alterações não salvas nas notas aparece como alerta de atenção.
+- Links de avisos, disciplinas e notas apontam para a área do papel do usuário.
+- Botão secundário, campo e botão de ícone têm estado desabilitado próprio.
 
 ## [1.1.0] - 2026-11-25
 
