@@ -9,5 +9,9 @@ export function RequireAuth() {
   const { token } = useSession();
   const query = useCurrentUser();
   if (token === null) return <Navigate to="/login" replace />;
-  return <QueryState query={query}>{(user) => <AppLayout user={user} />}</QueryState>;
+  return (
+    <QueryState query={query} errorView="fullScreen">
+      {(user) => <AppLayout user={user} />}
+    </QueryState>
+  );
 }

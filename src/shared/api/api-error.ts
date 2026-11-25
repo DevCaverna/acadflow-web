@@ -15,6 +15,17 @@ export function getApiError(error: unknown): ApiError | undefined {
   return apiErrorSchema.safeParse(error.response?.data).data;
 }
 
+export type ErrorKind = 'notFound' | 'forbidden' | 'server' | 'offline';
+
+export function getErrorKind(error: unknown): ErrorKind | null {
+  if (!isAxiosError(error)) return null;
+  if (!error.response) return navigator.onLine ? 'server' : 'offline';
+  const { status } = error.response;
+  if (status === 403) return 'forbidden';
+  if (status === 404) return 'notFound';
+  return status >= 500 ? 'server' : null;
+}
+
 export function getErrorMessage(error: unknown): string {
   const apiError = getApiError(error);
   if (apiError) return apiError.message;

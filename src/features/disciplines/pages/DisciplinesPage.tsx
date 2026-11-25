@@ -39,6 +39,7 @@ export function DisciplinesPage() {
       <DisciplineList
         search={filters.search.trim()}
         page={filters.page}
+        showStats={role === 'PROFESSOR'}
         emptyAction={createButton}
         onPageChange={(page) => setFilters({ ...filters, page })}
         onClearSearch={() => setFilters({ search: '', page: 1 })}

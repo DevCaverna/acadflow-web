@@ -24,5 +24,12 @@
   "count_one": "{{count}} course",
   "count_other": "{{count}} courses",
   "enrollmentHint": "Average: only saved grades.",
-  "descriptionPlaceholder": "Short syllabus"
+  "descriptionPlaceholder": "Short syllabus",
+  "stats": {
+    "students_one": "student",
+    "students_other": "students",
+    "activities_one": "activity",
+    "activities_other": "activities",
+    "average": "average"
+  }
 }

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink, Outlet } from 'react-router';
-import { useLogout } from '@/features/auth/hooks/useLogout';
+import { useLogout } from '@/shared/hooks/useLogout';
 import type { User } from '@/features/auth/schemas/auth.schema';
 import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 import { Avatar } from '@/shared/components/Avatar';

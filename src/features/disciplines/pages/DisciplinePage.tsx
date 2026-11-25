@@ -24,7 +24,7 @@ export function DisciplinePage() {
   const [dialog, setDialog] = useState<'edit' | 'remove' | null>(null);
 
   return (
-    <QueryState query={query}>
+    <QueryState query={query} errorView="page">
       {(discipline) => (
         <>
           <Breadcrumb

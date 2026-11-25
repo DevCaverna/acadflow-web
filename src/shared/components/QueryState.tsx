@@ -1,32 +1,53 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getErrorMessage } from '@/shared/api/api-error';
+import { getErrorKind, getErrorMessage } from '@/shared/api/api-error';
 import { Alert } from '@/shared/components/Alert';
 import { Button } from '@/shared/components/Button';
+import { QueryErrorPage } from '@/shared/components/QueryErrorPage';
 import { Skeleton } from '@/shared/components/Skeleton';
 
 /** Props de {@link QueryState}. */
 type QueryStateProps<Data> = {
   /** Consulta exibida. */
   query: UseQueryResult<Data>;
+  /**
+   * Como exibir a falha: aviso, página no conteúdo ou tela inteira.
+   * @default 'alert'
+   */
+  errorView?: 'alert' | 'page' | 'fullScreen';
   /** Conteúdo quando há dados. */
   children: (data: Data) => ReactNode;
 };
 
 /** Trata carregamento e erro de uma consulta antes de exibir os dados. */
-export function QueryState<Data>({ query, children }: QueryStateProps<Data>) {
+export function QueryState<Data>({ query, errorView = 'alert', children }: QueryStateProps<Data>) {
   const { t } = useTranslation();
   if (query.data !== undefined) return children(query.data);
-  if (query.error) {
+
+  const paused = query.fetchStatus === 'paused';
+  if (!paused && !query.error) return <Skeleton />;
+
+  const kind = paused ? 'offline' : getErrorKind(query.error);
+  const message = paused ? t('errors:network') : getErrorMessage(query.error);
+  const retry = () => void query.refetch();
+
+  if (kind && errorView !== 'alert') {
     return (
-      <div className="flex flex-col items-start gap-3">
-        <Alert>{getErrorMessage(query.error)}</Alert>
-        <Button variant="secondary" onClick={() => void query.refetch()}>
-          {t('retry')}
-        </Button>
-      </div>
+      <QueryErrorPage
+        kind={kind}
+        message={message}
+        fullScreen={errorView === 'fullScreen'}
+        onRetry={retry}
+      />
     );
   }
-  return <Skeleton />;
+  return (
+    <div className="flex flex-col items-start gap-3">
+      <Alert>{message}</Alert>
+      <Button variant="secondary" onClick={retry}>
+        {t('retry')}
+      </Button>
+    </div>
+  );
 }

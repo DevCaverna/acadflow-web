@@ -42,7 +42,7 @@ export function Field({
     'aria-invalid': error !== undefined,
     'aria-describedby': error ? errorId : undefined,
     className: cn(
-      'w-full rounded-field border border-field bg-surface px-3.5 text-[15px] text-ink read-only:bg-canvas',
+      'w-full rounded-field border border-field bg-surface px-3.5 text-[15px] text-ink read-only:bg-canvas disabled:border-line disabled:bg-canvas disabled:text-muted',
       'focus:border-primary focus:ring-3 focus:ring-primary-muted focus:outline-none',
       multiline ? 'min-h-24 py-3' : 'h-11',
       action && 'pr-12',

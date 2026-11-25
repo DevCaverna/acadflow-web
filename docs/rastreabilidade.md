@@ -23,7 +23,7 @@ Este documento mapeia as telas e fluxos especificados em [acadflow-design](https
 | `Perfil`, `PerfilFoto` _(v1.3)_                   | `/profile` (`ProfilePage`, `AvatarForm`, `ProfileForm`, `PasswordForm`)              | `PATCH /users/me`, `PATCH /users/me/password` `(ACA-24)`, `POST/DELETE /users/me/avatar` `(ACA-25)`                                          | Implementado na Web (`ACA-24`/`ACA-25` na API) |
 | `TemaEscuro` _(v1.3)_                             | `ThemeToggle`, `src/styles/index.css` (`[data-theme='dark']`)                        | — (preferência em `localStorage`)                                                                                                            | Implementado                                   |
 | `Erro404`                                         | `*` (`NotFoundPage`)                                                                 | —                                                                                                                                            | Implementado                                   |
-| `Erro403`, `Erro500`, `SemConexao`, `Feedback`    | `QueryState`, `Alert`, `Toaster`, `ConfirmDialog`                                    | Contrato `{ statusCode, code, message }`                                                                                                     | Implementado de forma contextual nas telas     |
+| `Erro403`, `Erro500`, `SemConexao`, `Feedback`    | `ErrorPage`, `QueryErrorPage`, `QueryState`, `Alert`, `Toaster`, `ConfirmDialog`     | Contrato `{ statusCode, code, message }`                                                                                                     | Implementado de forma contextual nas telas     |
 
 ---
 

@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { getErrorMessage } from '@/shared/api/api-error';
+import { getApiError, getErrorMessage } from '@/shared/api/api-error';
 import { Alert } from '@/shared/components/Alert';
 import { Button } from '@/shared/components/Button';
 import { Icon } from '@/shared/components/Icon';
 import { Modal } from '@/shared/components/Modal';
+import { cn } from '@/shared/lib/cn';
 
 /** Props de {@link ConfirmDialog}. */
 type ConfirmDialogProps = {
@@ -31,21 +32,35 @@ export function ConfirmDialog({
   onClose,
 }: ConfirmDialogProps) {
   const { t } = useTranslation();
+  const blocked = getApiError(error)?.statusCode === 409;
   return (
-    <Modal title={title} onClose={onClose}>
+    <Modal title={blocked ? t('blockedTitle') : title} onClose={onClose}>
       <div className="flex flex-col gap-4 p-6">
-        <span className="inline-flex size-12 items-center justify-center rounded-full bg-danger-soft text-danger">
-          <Icon name={error ? 'lock' : 'remove'} />
+        <span
+          className={cn(
+            'inline-flex size-12 items-center justify-center rounded-full',
+            blocked ? 'bg-warning-soft text-warning' : 'bg-danger-soft text-danger',
+          )}
+        >
+          <Icon name={blocked ? 'lock' : 'remove'} />
         </span>
-        <p className="text-[15px] text-muted wrap-anywhere">{message}</p>
-        {error && <Alert>{getErrorMessage(error)}</Alert>}
+        <p role={blocked ? 'alert' : undefined} className="text-[15px] text-muted wrap-anywhere">
+          {blocked ? getErrorMessage(error) : message}
+        </p>
+        {error && !blocked && <Alert>{getErrorMessage(error)}</Alert>}
         <div className="flex justify-end gap-3">
-          <Button variant="secondary" onClick={onClose}>
-            {t('cancel')}
-          </Button>
-          <Button variant="danger" loading={loading} onClick={onConfirm}>
-            {t('remove')}
-          </Button>
+          {blocked ? (
+            <Button onClick={onClose}>{t('understood')}</Button>
+          ) : (
+            <>
+              <Button variant="secondary" onClick={onClose}>
+                {t('cancel')}
+              </Button>
+              <Button variant="danger" loading={loading} onClick={onConfirm}>
+                {t('remove')}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </Modal>

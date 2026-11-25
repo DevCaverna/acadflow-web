@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { DisciplineStats } from '@/features/disciplines/components/DisciplineStats';
 import { useDisciplines } from '@/features/disciplines/hooks/useDisciplines';
 import { Button } from '@/shared/components/Button';
 import { EmptyState } from '@/shared/components/EmptyState';
@@ -13,6 +14,8 @@ type DisciplineListProps = {
   search: string;
   /** Página atual. */
   page: number;
+  /** Mostra alunos, atividades e média, dados só do professor. */
+  showStats: boolean;
   /** Ação exibida quando não há disciplinas. */
   emptyAction?: ReactNode;
   /** Chamado com a página escolhida. */
@@ -25,6 +28,7 @@ type DisciplineListProps = {
 export function DisciplineList({
   search,
   page,
+  showStats,
   emptyAction,
   onPageChange,
   onClearSearch,
@@ -33,7 +37,7 @@ export function DisciplineList({
   const query = useDisciplines({ page, filter: search ? { search } : undefined });
 
   return (
-    <QueryState query={query}>
+    <QueryState query={query} errorView="page">
       {({ data, perPage, total }) => {
         if (total === 0) {
           return search ? (
@@ -80,9 +84,13 @@ export function DisciplineList({
                       <p className="line-clamp-3 text-sm text-muted wrap-anywhere">{description}</p>
                     )}
                   </div>
-                  <p className="mt-auto border-t border-subtle pt-3.5 text-[13px] text-muted">
-                    {professor.name}
-                  </p>
+                  {showStats ? (
+                    <DisciplineStats disciplineId={id} />
+                  ) : (
+                    <p className="mt-auto border-t border-subtle pt-3.5 text-[13px] text-muted">
+                      {professor.name}
+                    </p>
+                  )}
                   <Link
                     to={`/disciplines/${id}`}
                     aria-label={`${t('open')}: ${name}`}

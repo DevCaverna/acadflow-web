@@ -25,19 +25,6 @@
     "PROFESSOR": "Professor",
     "ALUNO": "Student"
   },
-  "notFound": {
-    "label": "Error 404",
-    "title": "Page not found",
-    "text": "The address you tried to open does not exist or was moved.",
-    "back": "Back to start"
-  },
-  "routeError": {
-    "label": "Unexpected error",
-    "title": "Something went wrong on this page",
-    "text": "Could not display this screen right now. You can reload or go back to start.",
-    "reload": "Reload page",
-    "back": "Back to start"
-  },
   "optional": "(optional)",
   "areas": {
     "PROFESSOR": "Professor area",
@@ -48,5 +35,40 @@
   "theme": {
     "dark": "Use dark theme",
     "light": "Use light theme"
-  }
+  },
+  "errorPages": {
+    "home": "Back to start",
+    "login": "Back to sign in",
+    "otherAccount": "Use another account",
+    "reconnect": "Try to reconnect",
+    "reload": "Reload page",
+    "path": "Path: {{path}}",
+    "notFound": {
+      "label": "Error 404",
+      "title": "Page not found",
+      "text": "The address you tried to open does not exist or was moved."
+    },
+    "forbidden": {
+      "label": "Error 403 · restricted access",
+      "title": "You do not have access to this area",
+      "text": "Your profile is not allowed to see this content. If you think this is a mistake, contact the coordination office."
+    },
+    "server": {
+      "label": "Server error",
+      "title": "Something went wrong on our side",
+      "text": "The server could not complete the request. Try again in a few moments."
+    },
+    "offline": {
+      "label": "No connection",
+      "title": "You are offline",
+      "text": "Check your Wi-Fi or mobile data. We will reload the page as soon as the connection is back."
+    },
+    "unexpected": {
+      "label": "Unexpected error",
+      "title": "Something went wrong on this page",
+      "text": "Could not display this screen right now. You can reload or go back to start."
+    }
+  },
+  "understood": "Got it",
+  "blockedTitle": "Cannot delete"
 }

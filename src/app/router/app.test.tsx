@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { onlineManager } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { createMemoryRouter } from 'react-router';
@@ -233,6 +234,58 @@ describe('app', () => {
       expect(await screen.findByText('Nenhuma disciplina ainda')).toBeInTheDocument();
     });
 
+    it.each([
+      [403, 'FORBIDDEN', 'Você não tem acesso a esta área'],
+      [404, 'NOT_FOUND', 'Página não encontrada'],
+      [500, 'INTERNAL_ERROR', 'Algo deu errado do nosso lado'],
+    ])('shows the error page for status %i', async (status, code, title) => {
+      setup(professor, { [`get /disciplines/${id(3)}`]: error(status, code, 'Falha') });
+      renderApp(`/disciplines/${id(3)}`);
+      expect(await screen.findByRole('heading', { name: title })).toBeInTheDocument();
+    });
+
+    it('signs out from the forbidden page', async () => {
+      setup(professor, { [`get /disciplines/${id(3)}`]: error(403, 'FORBIDDEN', 'Falha') });
+      renderApp(`/disciplines/${id(3)}`);
+      await userEvent.click(await screen.findByRole('button', { name: 'Entrar com outra conta' }));
+      expect(await screen.findByRole('heading', { name: 'Entrar' })).toBeInTheDocument();
+      expect(accessToken.get()).toBeNull();
+    });
+
+    it('shows the offline page and recovers when the connection returns', async () => {
+      setup(professor);
+      onlineManager.setOnline(false);
+      try {
+        renderApp('/disciplines');
+        expect(
+          await screen.findByRole('heading', { name: 'Você está sem internet' }),
+        ).toBeInTheDocument();
+        onlineManager.setOnline(true);
+        expect(await screen.findByRole('heading', { name: 'Banco de Dados' })).toBeInTheDocument();
+      } finally {
+        onlineManager.setOnline(true);
+      }
+    });
+
+    it('shows class numbers to professors', async () => {
+      setup(professor, {
+        [`get /disciplines/${id(3)}/grades`]: {
+          data: [
+            {
+              student: { id: id(2), name: 'Ana', email: 'a@example.com' },
+              grades: [],
+              average: 7.5,
+              status: 'APPROVED',
+            },
+          ],
+        },
+      });
+      renderApp('/disciplines');
+      expect(await screen.findByText('7,5')).toBeInTheDocument();
+      expect(screen.getByText('aluno')).toBeInTheDocument();
+      expect(await screen.findByText('atividades')).toBeInTheDocument();
+    });
+
     it('searches and moves between pages', async () => {
       const requests = setup(professor, {
         'get /disciplines': ({ params }: InternalAxiosRequestConfig) => ({
@@ -307,6 +360,9 @@ describe('app', () => {
       const dialog = screen.getByRole('dialog');
       await userEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
       expect(await screen.findByText('Há dependências')).toBeInTheDocument();
+      expect(within(dialog).queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
+      await userEvent.click(within(dialog).getByRole('button', { name: 'Entendi' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('hides writing actions from students', async () => {
