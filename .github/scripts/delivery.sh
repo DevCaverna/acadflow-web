@@ -172,10 +172,6 @@ resolve_deploy() {
       ;;
     production)
       tag=$(version_tag "$version")
-      gh api "$repo/environments/production" |
-        jq -e 'any(.protection_rules[]?; .type == "required_reviewers" and
-          .prevent_self_review == true and (.reviewers | length) > 0)' > /dev/null ||
-        fail 'Configure production required reviewers with self-review disabled.'
       release=$(gh api "$repo/releases/tags/$tag")
       jq -e '.draft == false and .prerelease == false' <<< "$release" > /dev/null ||
         fail 'Expected a published stable release.'

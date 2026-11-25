@@ -8,9 +8,9 @@ domínios e o provisionamento do host são externos a este repositório.
 ## GitHub Environments
 
 Em **Settings → Environments**, crie `development`, `staging` e `production`. Permita
-execuções somente da branch `main`. Em `production`, configure **Required reviewers**,
-**Prevent self-review** e desabilite bypass administrativo. O deploy recusa produção sem
-revisores ou com autoaprovação habilitada. Proteja também as branches por PR com CI e
+execuções somente da branch `main`. Em `production`, recomenda-se configurar **Required
+reviewers**, marcar **Prevent self-review** e desabilitar o bypass administrativo. O GitHub
+aplica as regras do Environment; o workflow não exige revisores. Proteja também as branches por PR com CI e
 impeça alteração ou exclusão de tags `v*`, preservando sua criação pelo workflow.
 Se um ruleset bloquear o push de release em `main`, configure a autorização da automação de
 release sem desativar a proteção para alterações comuns.
@@ -66,7 +66,7 @@ Execute todos a partir de `main`. Um push executa CI, mas não dispara publicaç
    commit de release. Depois, publica o commit em `main`, a tag `vX.Y.Z` e a release com
    as notas. Não consulta deploys nem aciona um deploy. Em caso de falha parcial, use
    **Re-run failed jobs** na mesma execução. Não mova uma tag publicada.
-3. **Deploy Release**: informe `X.Y.Z` e aguarde a aprovação de `production`. O workflow
+3. **Deploy Release**: informe `X.Y.Z` e aguarde aprovação se configurada em `production`. O workflow
    verifica o digest assinado da release e o implanta sem rebuild ou deploy anterior em staging.
 
 O histórico de deployments registra versão, digest e resultado. O deploy verifica a página

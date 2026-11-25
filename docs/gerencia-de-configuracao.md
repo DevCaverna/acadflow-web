@@ -7,7 +7,7 @@ Este documento formaliza o **Plano de Gerência de Configuração de Software** 
 ## 1. Objetivo, Escopo e Papéis (CCB)
 
 - **Escopo:** cobre todos os artefatos versionados de `DevCaverna/acadflow-web` e sua integração com `DevCaverna/acadflow-api` e `DevCaverna/acadflow-design`.
-- **Comitê de Controle de Mudanças (CCB):** opera via revisão obrigatória de Pull Requests por mantenedores em `.github/CODEOWNERS`, checks automáticos (`Web / Validate` e `Web / Build`) e aprovação manual explícita no Environment `production` (sem autoaprovação).
+- **Comitê de Controle de Mudanças (CCB):** opera via revisão obrigatória de Pull Requests por mantenedores em `.github/CODEOWNERS`, checks automáticos (`Web / Validate` e `Web / Build`) e aprovação manual quando configurada no Environment `production`.
 
 | Papel no Projeto                   | Responsável (GitHub) | Atuação em GCS                                               |
 | ---------------------------------- | -------------------- | ------------------------------------------------------------ |
@@ -40,7 +40,7 @@ Este documento formaliza o **Plano de Gerência de Configuração de Software** 
 | **Baseline de Design**      | `acadflow-design` (`main`) | PR revisado (`v1.0` → `v1.3`)                         | Referência visual, tokens e acessibilidade |
 | **Baseline de Integração**  | Commit de `main`           | PR revisado + `Web / Validate` e `Web / Build` verdes | Snapshot em `development`                  |
 | **Baseline de Homologação** | Commit de `main`           | Snapshot assinado implantado em `staging`             | Validação integrada com API `staging`      |
-| **Baseline de Produção**    | Release `vX.Y.Z`           | Digest assinado da release + aprovação humana         | Imagem assinada por digest + SBOM          |
+| **Baseline de Produção**    | Release `vX.Y.Z`           | Digest assinado da release                            | Imagem assinada por digest + SBOM          |
 
 ### 2.3 Versionamento Semântico (`SemVer 2.0.0`)
 
@@ -63,7 +63,7 @@ flowchart LR
     PRMain --> SnapDev["Deploy Snapshot (development)"]
     PRMain --> SnapStg["Deploy Snapshot (staging)"]
     PRMain --> Rel["Create Release (X.Y.Z)"]
-    Rel --> Prod["Deploy Release (production, com aprovação)"]
+    Rel --> Prod["Deploy Release (production)"]
 ```
 
 ### 3.2 Regras de Controle Aplicadas
@@ -90,7 +90,7 @@ Hotfixes normalmente geram uma release patch.
 | Descoberta da API   | `.env` (`VITE_API_BASE_URL`) | `/runtime-config.js` (sem cache)        | `/runtime-config.js` (sem cache)        | `/runtime-config.js` (sem cache)                               |
 | Porta na VPS / Host | `5173` (Vite dev)            | `WEB_HOST_PORT` (ex.: `127.0.0.1:4100`) | `WEB_HOST_PORT` (ex.: `127.0.0.1:4200`) | `WEB_HOST_PORT` (ex.: `127.0.0.1:4300`)                        |
 | Contêiner interno   | `Dockerfile.dev`             | Nginx não privilegiado (`:8080`)        | Nginx não privilegiado (`:8080`)        | Nginx não privilegiado (`:8080`)                               |
-| Aprovação humana    | N/A                          | Acionamento manual                      | Acionamento manual                      | Obrigatória sem autoaprovação                                  |
+| Aprovação humana    | N/A                          | Acionamento manual                      | Acionamento manual                      | Conforme regras do Environment                                 |
 | Rollback rápido     | `git`                        | Contêiner `-previous` na VPS            | Contêiner `-previous` na VPS            | Contêiner `-previous` (restaura bundle e `/runtime-config.js`) |
 
 ---

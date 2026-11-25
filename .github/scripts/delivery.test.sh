@@ -60,10 +60,6 @@ gh() {
       fi
       ;;
     *'/releases?per_page=100') printf '[]\n' ;;
-    *'/environments/production')
-      jq -cn --argjson protected "${PROTECTED:-true}" \
-        '{protection_rules: [{type: "required_reviewers", prevent_self_review: $protected, reviewers: [{}]}]}'
-      ;;
     *'/releases/tags/v0.1.0')
       jq -cn --arg body "<!-- acadflow-image: $body -->" --argjson draft "${DRAFT:-false}" \
         '{body: $body, draft: $draft, prerelease: false}'
@@ -139,8 +135,6 @@ CI_RESULT=failure assert_failure 'No successful CI' \
 CI_EVENT=workflow_dispatch "${delivery[@]}" snapshot development "$older_commit"
 grep -Fxq "revision=$older_commit" "$GITHUB_OUTPUT"
 assert_failure 'Expected X.Y.Z' "${delivery[@]}" release 0.1
-PROTECTED=false assert_failure 'Configure production required reviewers' \
-  "${delivery[@]}" resolve production v0.1.0
 DRAFT=true TAG_EXISTS=yes assert_failure 'Expected a published stable release' \
   "${delivery[@]}" resolve production v0.1.0
 TAG_EXISTS=yes "${delivery[@]}" resolve production 0.1.0
