@@ -75,7 +75,7 @@ test/
 
 - Implementar as telas a partir do `acadflow-design`: professor, aluno, login, atividades, notas e estados de erro.
 - A UI mostra **aprovado para média ≥ 7**, **recuperação para média 5 até < 7** e **reprovado para média < 5**. Sem notas deve mostrar estado próprio, nunca reprovação automática.
-- Sem tela de cadastro no MVP: as contas vêm de seed da API. Dark mode, anexos, perfil completo e notificações são pós-MVP.
+- O cadastro público permite criar conta de professor ou aluno sem verificação de e-mail. Dark mode, anexos, perfil completo e notificações são pós-MVP.
 - Tratar loading, erro, sem dados, requisição rejeitada e sessão expirada antes de declarar uma página pronta.
 - HTML semântico, foco visível, teclado, labels, alt text e contraste adequado.
 - Conferir desktop e largura móvel.

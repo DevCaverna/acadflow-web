@@ -80,6 +80,58 @@ describe('app', () => {
   });
 
   describe('session', () => {
+    async function fillRegistrationForm(user: typeof professor, confirmation = 'test-password') {
+      await userEvent.click(
+        screen.getByRole('radio', { name: user.role === 'ALUNO' ? 'Aluno' : 'Professor' }),
+      );
+      await userEvent.type(screen.getByLabelText('Nome completo'), user.name);
+      await userEvent.type(screen.getByLabelText('E-mail'), user.email);
+      await userEvent.type(screen.getByLabelText('Senha', { exact: true }), 'test-password');
+      await userEvent.type(screen.getByLabelText('Confirmar senha'), confirmation);
+      await userEvent.click(screen.getByRole('button', { name: 'Criar conta' }));
+    }
+
+    it.each([
+      [professor, 'Lançar notas'],
+      [student, 'Notas e média'],
+    ])('registers and opens the menu of the selected role', async (user, menu) => {
+      const requests = setup(user, {
+        'post /auth/register': { status: 201, data: { accessToken: 'registration-token', user } },
+      });
+      renderApp('/login');
+      await userEvent.click(screen.getByRole('link', { name: 'Criar conta' }));
+      expect(screen.getByRole('heading', { name: 'Criar conta' })).toBeInTheDocument();
+      await fillRegistrationForm(user);
+      const nav = await screen.findByRole('navigation', { name: 'Menu principal' });
+      expect(within(nav).getByRole('link', { name: menu })).toBeInTheDocument();
+      expect(accessToken.get()).toBe('registration-token');
+      const sent = requests.find(({ url }) => url === '/auth/register');
+      expect(JSON.parse(String(sent?.data))).toEqual({
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        password: 'test-password',
+      });
+    });
+
+    it('does not send registration when passwords differ', async () => {
+      const requests = setup(student);
+      renderApp('/register');
+      await fillRegistrationForm(student, 'different-password');
+      expect(await screen.findByText('As senhas não coincidem')).toBeInTheDocument();
+      expect(requests).toHaveLength(0);
+    });
+
+    it('displays a duplicate email without starting a session', async () => {
+      setup(student, {
+        'post /auth/register': error(409, 'EMAIL_ALREADY_IN_USE', 'Este e-mail já está em uso'),
+      });
+      renderApp('/register');
+      await fillRegistrationForm(student);
+      expect(await screen.findByRole('alert')).toHaveTextContent('Este e-mail já está em uso');
+      expect(accessToken.get()).toBeNull();
+    });
+
     it('redirects to login without a token', async () => {
       setup(professor);
       const router = renderApp('/disciplines');
